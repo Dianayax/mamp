@@ -351,25 +351,37 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin-top: 12px;
-            font-size: 12px;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
         }
         .volume-container input {
-            width: 100px;
+            width: 90px;
             -webkit-appearance: none;
             appearance: none;
-            height: 3px;
-            border-radius: 2px;
-            background: rgba(255,255,255,0.15);
+            height: 6px;
+            border-radius: 0;
+            background: #222;
             outline: none;
+            border: 1px solid #555;
         }
         .volume-container input::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff6ec7;
+            width: 14px;
+            height: 14px;
+            border-radius: 0;
+            background: #888;
+            border: 1px solid #aaa;
+            cursor: pointer;
+        }
+        .volume-container input::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 0;
+            background: #888;
+            border: 1px solid #aaa;
+            cursor: pointer;
         }
 
         /* === CHROME Y2K DECORATIONS === */
@@ -811,7 +823,7 @@
         </div>
 
         <div class="volume-container">
-            <span style="color:#ff6ec7;font-size:14px;">VOL</span>
+            <span style="color:#aaa;font-size:11px;font-family:'Courier New',monospace;letter-spacing:2px;">VOL</span>
             <input type="range" id="volume" min="0" max="1" step="0.05" value="0.7">
         </div>
     </div>
