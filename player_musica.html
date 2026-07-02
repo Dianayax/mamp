@@ -125,6 +125,8 @@
         .item-pesquisa:hover {
             background: rgba(255,255,255,0.1);
             border-color: rgba(204,51,51,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         .item-pesquisa .nome {
             color: #fff;
@@ -206,6 +208,16 @@
             font-size: 10px;
             color: rgba(255,255,255,0.5);
             margin-top: 4px;
+        }
+        .ipod-ecra .letra-ecra {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #ccc;
+            min-height: 18px;
+            line-height: 1.4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            text-shadow: 0 0 8px rgba(204,51,51,0.4);
+            transition: opacity 0.3s;
         }
 
         /* === CLICK WHEEL DO IPOD === */
@@ -818,6 +830,7 @@
                 <span id="tempoAtual">0:00</span>
                 <span id="tempoTotal">0:00</span>
             </div>
+            <div class="letra-ecra" id="letraEcra"></div>
         </div>
 
         <div class="click-wheel">
@@ -1230,6 +1243,7 @@
     const capaEl = document.getElementById('capa');
     const playerCard = document.getElementById('player');
     const letraContent = document.getElementById('letraContent');
+    const letraEcra = document.getElementById('letraEcra');
     const pesquisaInput = document.getElementById('pesquisaInput');
     const resultadosPesquisa = document.getElementById('resultadosPesquisa');
 
@@ -1404,7 +1418,10 @@
 
     function sincronizarLetra() {
         const musica = musicas[indiceAtual];
-        if (!musica || !musica.letra || musica.letra.length === 0) return;
+        if (!musica || !musica.letra || musica.letra.length === 0) {
+            letraEcra.textContent = '';
+            return;
+        }
         const linhas = musica.letra;
         let novaLinha = -1;
         for (let i = linhas.length - 1; i >= 0; i--) {
@@ -1422,6 +1439,9 @@
                 novo.classList.add('destacado');
                 novo.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+            letraEcra.textContent = linhas[novaLinha].texto;
+        } else {
+            letraEcra.textContent = '';
         }
     }
 
