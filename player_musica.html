@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Player de Música - Chromecore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a2e;
+            background-image: url('file:///C:/Users/Diana/Downloads/chromecore%20y2k%20icon.jpg');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            padding: 20px;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 0;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ===== PAINEL DE PESQUISA (ESQUERDA) ===== */
+        .painel-pesquisa {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 25px;
+            width: 280px;
+            min-width: 220px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .painel-pesquisa h2 {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ff6ec7;
+            text-shadow: 0 0 20px rgba(255,110,199,0.5);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .painel-pesquisa input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .painel-pesquisa input:focus {
+            border-color: #ff6ec7;
+            box-shadow: 0 0 15px rgba(255,110,199,0.3);
+        }
+        .painel-pesquisa input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        .resultados-pesquisa {
+            margin-top: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .resultados-pesquisa::-webkit-scrollbar {
+            width: 4px;
+        }
+        .resultados-pesquisa::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .resultados-pesquisa::-webkit-scrollbar-thumb {
+            background: rgba(255,110,199,0.5);
+            border-radius: 2px;
+        }
+        .item-pesquisa {
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid transparent;
+        }
+        .item-pesquisa:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,110,199,0.3);
+        }
+        .item-pesquisa .nome {
+            color: #fff;
+        }
+        .item-pesquisa .artista {
+            color: #ff6ec7;
+            font-size: 11px;
+        }
+
+        /* ===== IPOD (CENTRO) ===== */
+        .ipod {
+            width: 340px;
+            min-width: 300px;
+            background: linear-gradient(145deg, #e8e8e8, #c0c0c0, #a8a8a8);
+            border-radius: 30px;
+            padding: 18px;
+            box-shadow:
+                0 15px 50px rgba(0,0,0,0.5),
+                inset 0 2px 4px rgba(255,255,255,0.3),
+                inset 0 -2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .ipod-ecra {
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 200px;
+            border: 2px solid #555;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            text-align: center;
+            color: white;
+        }
+        .ipod-ecra .capa {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            display: block;
+            border: 2px solid rgba(255,255,255,0.1);
+            animation: girar 10s linear infinite;
+            animation-play-state: paused;
+        }
+        .ipod.tocando .ipod-ecra .capa {
+            animation-play-state: running;
+        }
+        @keyframes girar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .ipod-ecra .titulo {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0,210,255,0.4);
+        }
+        .ipod-ecra .artista {
+            font-size: 12px;
+            color: #ff6ec7;
+            margin-top: 2px;
+        }
+        .ipod-ecra .barra-progresso {
+            width: 100%;
+            margin-top: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.15);
+            outline: none;
+            cursor: pointer;
+        }
+        .ipod-ecra .barra-progresso::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00d2ff;
+            box-shadow: 0 0 10px rgba(0,210,255,0.5);
+        }
+        .ipod-ecra .tempos {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+
+        /* === CLICK WHEEL DO IPOD === */
+        .click-wheel {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #d0d0d0 0deg, #f0f0f0 45deg, #b8b8b8 90deg,
+                #e0e0e0 135deg, #c8c8c8 180deg, #f0f0f0 225deg,
+                #b0b0b0 270deg, #d8d8d8 315deg, #d0d0d0 360deg
+            );
+            margin: 0 auto;
+            position: relative;
+            box-shadow:
+                inset 0 -3px 8px rgba(0,0,0,0.25),
+                inset 0 3px 8px rgba(255,255,255,0.4),
+                0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wheel-btn {
+            position: absolute;
+            color: #666;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .wheel-btn:hover { color: #ff6ec7; }
+        .wheel-btn.menu { top: 18px; left: 50%; transform: translateX(-50%); }
+        .wheel-btn.prev { left: 18px; top: 50%; transform: translateY(-50%); }
+        .wheel-btn.next { right: 18px; top: 50%; transform: translateY(-50%); }
+        .wheel-btn.prevv { left: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); font-size: 8px; display: none; }
+
+        .wheel-center {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #fff, #e0e0e0);
+            box-shadow:
+                inset 0 -2px 4px rgba(0,0,0,0.15),
+                inset 0 2px 4px rgba(255,255,255,0.5),
+                0 2px 6px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            background-image: url('file:///C:/Users/Diana/Downloads/cd.jpg');
+            background-size: cover;
+            background-position: center;
+            font-size: 0;
+            color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .wheel-center::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .wheel-center:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== PAINEL DE LETRA (DIREITA) ===== */
+        .painel-letra {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 25px;
+            width: 280px;
+            min-width: 220px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .painel-letra h2 {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #00d2ff;
+            text-shadow: 0 0 20px rgba(0,210,255,0.5);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .painel-letra .letra-content {
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+            scroll-behavior: smooth;
+        }
+        .painel-letra .letra-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .painel-letra .letra-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .painel-letra .letra-content::-webkit-scrollbar-thumb {
+            background: rgba(0,210,255,0.5);
+            border-radius: 2px;
+        }
+        .painel-letra .letra-content p {
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .painel-letra .letra-content p.destacado {
+            color: #00d2ff;
+            background: rgba(0,210,255,0.1);
+            font-weight: bold;
+        }
+        .sem-letra {
+            color: rgba(255,255,255,0.3);
+            font-style: italic;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        /* === VOLUME === */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+        .volume-container input {
+            width: 100px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.15);
+            outline: none;
+        }
+        .volume-container input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff6ec7;
+        }
+
+        /* === CHROME Y2K DECORATIONS === */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255,110,199,0.5), 0 0 30px rgba(0,210,255,0.3);
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .painel-pesquisa, .painel-letra {
+                width: 100%;
+                max-width: 340px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
+    <div class="painel-pesquisa">
+        <h2>🔍 Pesquisar</h2>
+        <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
+        <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
+    </div>
+
+    <!-- IPOD (CENTRO) -->
+    <div class="ipod" id="player">
+        <div class="ipod-ecra">
+            <img class="capa" id="capa" src="https://via.placeholder.com/100/1a1a2e/00d2ff?text=M%C3%BAsica" alt="Capa">
+            <div class="titulo" id="titulo">Nenhuma música</div>
+            <div class="artista" id="artista">---</div>
+            <input class="barra-progresso" type="range" id="progresso" value="0" min="0" max="100" step="0.1">
+            <div class="tempos">
+                <span id="tempoAtual">0:00</span>
+                <span id="tempoTotal">0:00</span>
+            </div>
+        </div>
+
+        <div class="click-wheel">
+            <span class="wheel-btn menu" onclick="musicaAnterior()" title="Anterior">⏮</span>
+            <span class="wheel-btn prev" onclick="musicaAnterior()" title="Anterior">◀</span>
+            <button class="wheel-center" id="btnPlay" onclick="alternarPlay()" title="Play/Pause"></button>
+            <span class="wheel-btn next" onclick="proximaMusica()" title="Seguinte">▶</span>
+        </div>
+
+        <div class="volume-container">
+            <span style="color:#ff6ec7;">🔊</span>
+            <input type="range" id="volume" min="0" max="1" step="0.05" value="0.7">
+        </div>
+    </div>
+
+    <!-- PAINEL DIREITO: LETRA -->
+    <div class="painel-letra">
+        <h2>🎵 Letra</h2>
+        <div class="letra-content" id="letraContent">
+            <div class="sem-letra">Seleciona uma música<br>para ver a letra</div>
+        </div>
+    </div>
+</div>
+
+<audio id="audio" style="display:none">
+    <source src="">
+</audio>
+
+<script>
+    const audio = document.getElementById('audio');
+    const btnPlay = document.getElementById('btnPlay');
+    const barraProgresso = document.getElementById('progresso');
+    const tempoAtualEl = document.getElementById('tempoAtual');
+    const tempoTotalEl = document.getElementById('tempoTotal');
+    const tituloEl = document.getElementById('titulo');
+    const artistaEl = document.getElementById('artista');
+    const capaEl = document.getElementById('capa');
+    const playerCard = document.getElementById('player');
+    const letraContent = document.getElementById('letraContent');
+    const pesquisaInput = document.getElementById('pesquisaInput');
+    const resultadosPesquisa = document.getElementById('resultadosPesquisa');
+
+    const musicas = [{
+        nome: "Minha Música 1",
+        artista: "Artista A",
+        ficheiro: "musica1.mp3",
+        capa: "https://via.placeholder.com/100/1a1a2e/00d2ff?text=M1",
+        letra: "Esta é a letra da Minha Música 1.\n\nVerso 1:\nLorem ipsum dolor sit amet\nConsectetur adipiscing elit\n\nRefrão:\nEsta é a minha canção\nUma linda melodia\n\nVerso 2:\nSed do eiusmod tempor\nIncididunt ut labore\n\nRefrão:\nEsta é a minha canção\nUma linda melodia"
+    }, {
+        nome: "Outra Música",
+        artista: "Artista B",
+        ficheiro: "musica2.mp3",
+        capa: "https://via.placeholder.com/100/1a1a2e/ff6b6b?text=M2",
+        letra: "Letra da Outra Música.\n\nVerso 1:\nUt enim ad minim veniam\nQuis nostrud exercitation\n\nRefrão:\nOutra música a tocar\nA fazer-nos sonhar\n\nPonte:\nDuis aute irure dolor\nIn reprehenderit voluptate"
+    }, {
+        nome: "Terceira Faixa",
+        artista: "Artista C",
+        ficheiro: "musica3.mp3",
+        capa: "https://via.placeholder.com/100/1a1a2e/4ecdc4?text=M3",
+        letra: "Letra da Terceira Faixa.\n\nVerso 1:\nExcepteur sint occaecat\nCupidatat non proident\n\nRefrão:\nTerceira faixa no ar\nVamos todos cantar\n\nFinal:\nSunt in culpa qui officia\nDeserunt mollit anim id est laborum"
+    }];
+
+    let indiceAtual = 0;
+    let linhaAtual = -1;
+    let intervaloLetra = null;
+
+    function carregarMusica(index) {
+        if (index < 0 || index >= musicas.length) return;
+        const musica = musicas[index];
+        audio.src = musica.ficheiro;
+        tituloEl.textContent = musica.nome;
+        artistaEl.textContent = musica.artista;
+        capaEl.src = musica.capa;
+        indiceAtual = index;
+        tempoTotalEl.textContent = '0:00';
+        mostrarLetra(musica.letra);
+        atualizarPesquisa();
+    }
+
+    function alternarPlay() {
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    }
+
+    function musicaAnterior() {
+        let novoIndex = (indiceAtual - 1 + musicas.length) % musicas.length;
+        carregarMusica(novoIndex);
+        audio.play();
+    }
+
+    function proximaMusica() {
+        let novoIndex = (indiceAtual + 1) % musicas.length;
+        carregarMusica(novoIndex);
+        audio.play();
+    }
+
+    function formatarTempo(segs) {
+        if (isNaN(segs) || segs === 0) return '0:00';
+        const min = Math.floor(segs / 60);
+        const seg = Math.floor(segs % 60);
+        return min + ':' + seg.toString().padStart(2, '0');
+    }
+
+    function mostrarLetra(letra) {
+        if (!letra) {
+            letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível</div>';
+            return;
+        }
+        const linhas = letra.split('\n');
+        let html = '';
+        linhas.forEach(function(linha, i) {
+            if (linha.trim() === '') {
+                html += '<br>';
+            } else {
+                html += '<p data-linha="' + i + '">' + linha + '</p>';
+            }
+        });
+        letraContent.innerHTML = html;
+
+        if (intervaloLetra) clearInterval(intervaloLetra);
+        linhaAtual = -1;
+        intervaloLetra = setInterval(function() {
+            if (audio.paused || !audio.duration) return;
+            const progresso = audio.currentTime / audio.duration;
+            const totalLinhas = linhas.filter(function(l) { return l.trim() !== ''; }).length;
+            if (totalLinhas === 0) return;
+            const novaLinha = Math.min(
+                Math.floor(progresso * totalLinhas),
+                totalLinhas - 1
+            );
+            if (novaLinha !== linhaAtual) {
+                if (linhaAtual >= 0) {
+                    const antigo = letraContent.querySelector('p[data-linha="' + linhaAtual + '"]');
+                    if (antigo) antigo.classList.remove('destacado');
+                }
+                linhaAtual = novaLinha;
+                const novo = letraContent.querySelector('p[data-linha="' + linhaAtual + '"]');
+                if (novo) {
+                    novo.classList.add('destacado');
+                    novo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }, 200);
+    }
+
+    // --- Eventos do áudio ---
+    audio.addEventListener('play', function() {
+        btnPlay.style.transform = 'scale(1.05)';
+        playerCard.classList.add('tocando');
+    });
+
+    audio.addEventListener('pause', function() {
+        btnPlay.style.transform = 'scale(1)';
+        playerCard.classList.remove('tocando');
+    });
+
+    audio.addEventListener('timeupdate', function() {
+        if (audio.duration) {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            barraProgresso.value = percent;
+        }
+        tempoAtualEl.textContent = formatarTempo(audio.currentTime);
+    });
+
+    audio.addEventListener('loadedmetadata', function() {
+        tempoTotalEl.textContent = formatarTempo(audio.duration);
+    });
+
+    audio.addEventListener('ended', function() {
+        proximaMusica();
+    });
+
+    audio.addEventListener('error', function() {
+        tituloEl.textContent = 'Erro ao carregar música';
+        artistaEl.textContent = 'Verifica o nome do ficheiro';
+    });
+
+    // --- Barra de progresso ---
+    barraProgresso.addEventListener('input', function() {
+        if (audio.duration) {
+            const novoTempo = (this.value / 100) * audio.duration;
+            audio.currentTime = novoTempo;
+        }
+    });
+
+    // --- Volume ---
+    const volumeSlider = document.getElementById('volume');
+    volumeSlider.addEventListener('input', function() {
+        audio.volume = this.value;
+    });
+
+    // --- Pesquisa de artistas ---
+    function atualizarPesquisa() {
+        const termo = pesquisaInput.value.toLowerCase().trim();
+        if (!termo) {
+            resultadosPesquisa.innerHTML = '';
+            return;
+        }
+        const filtradas = musicas.filter(function(m) {
+            return m.artista.toLowerCase().includes(termo) ||
+                   m.nome.toLowerCase().includes(termo);
+        });
+        if (filtradas.length === 0) {
+            resultadosPesquisa.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:10px;text-align:center;font-size:12px;">Nenhum resultado</div>';
+            return;
+        }
+        let html = '';
+        filtradas.forEach(function(m, idx) {
+            const realIndex = musicas.indexOf(m);
+            html += '<div class="item-pesquisa" data-index="' + realIndex + '">' +
+                    '<span class="nome">' + m.nome + '</span>' +
+                    '<span class="artista">' + m.artista + '</span>' +
+                    '</div>';
+        });
+        resultadosPesquisa.innerHTML = html;
+        resultadosPesquisa.querySelectorAll('.item-pesquisa').forEach(function(el) {
+            el.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                carregarMusica(idx);
+                audio.play();
+                pesquisaInput.value = '';
+                resultadosPesquisa.innerHTML = '';
+            });
+        });
+    }
+
+    pesquisaInput.addEventListener('input', atualizarPesquisa);
+
+    // --- Inicialização ---
+    carregarMusica(0);
+</script>
+
+</body>
+</html>
