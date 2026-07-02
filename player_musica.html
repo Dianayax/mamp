@@ -175,15 +175,6 @@
             margin: 0 auto 10px;
             display: block;
             border: 2px solid rgba(255,255,255,0.1);
-            animation: girar 10s linear infinite;
-            animation-play-state: paused;
-        }
-        .ipod.tocando .ipod-ecra .capa {
-            animation-play-state: running;
-        }
-        @keyframes girar {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         .ipod-ecra .titulo {
             font-size: 16px;
@@ -830,6 +821,21 @@
         }
     }
 
+    function buscarCapaAPI(artista, nome) {
+        const url = 'https://itunes.apple.com/search?term=' + encodeURIComponent(artista + ' ' + nome) + '&limit=1&entity=song';
+        return fetch(url).then(function(res) { return res.json(); }).then(function(data) {
+            if (data.results && data.results.length > 0) {
+                const artwork = data.results[0].artworkUrl100;
+                const capaGrande = artwork.replace('100x100', '256x256');
+                capaEl.src = capaGrande;
+                const musica = musicas[indiceAtual];
+                if (musica) musica.capa = capaGrande;
+                return true;
+            }
+            return false;
+        }).catch(function() { return false; });
+    }
+
     function buscarLetraAPI(artista, nome) {
         const url = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
         letraContent.innerHTML = '<div class="sem-letra">A carregar letra...</div>';
@@ -883,6 +889,7 @@
         atualizarPesquisa();
         indiceLinhaAtual = -1;
         atualizarMediaSession();
+        buscarCapaAPI(musica.artista, musica.nome);
         buscarLetraAPI(musica.artista, musica.nome);
     }
 
