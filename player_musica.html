@@ -26,7 +26,7 @@
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.4);
             z-index: 0;
         }
 
@@ -513,6 +513,108 @@
             border-color: #ff6ec7;
             color: #ff6ec7;
         }
+        .user-bar .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .user-bar .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.1);
+        }
+        .user-bar .profile-name {
+            color: white;
+            font-size: 13px;
+        }
+
+        /* === PROFILE MODAL === */
+        .profile-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+        .profile-overlay.show { display: flex; }
+        .profile-modal {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 30px;
+            padding: 35px;
+            width: 340px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .profile-modal h2 {
+            margin-bottom: 15px;
+            color: #00d2ff;
+        }
+        .profile-modal .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            display: block;
+            border: 3px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+        }
+        .profile-modal input {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .profile-modal input:focus {
+            border-color: #ff6ec7;
+        }
+        .profile-modal .btn-save {
+            width: 100%;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #ff6ec7, #00d2ff);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .profile-modal .btn-save:hover {
+            transform: scale(1.03);
+        }
+        .profile-modal .btn-close {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.4);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .profile-modal .btn-close:hover {
+            border-color: #ff6ec7;
+            color: #ff6ec7;
+        }
 
         @media (max-width: 900px) {
             .main-container {
@@ -530,8 +632,24 @@
 
     <!-- USER BAR -->
     <div class="user-bar" id="userBar" style="display:none">
-        <span class="email" id="userEmail"></span>
+        <div class="profile-info" onclick="abrirProfile()">
+            <img class="profile-avatar" id="profileAvatar" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=P" alt="avatar">
+            <span class="profile-name" id="profileName">Utilizador</span>
+        </div>
         <button class="btn-sair" onclick="logout()">Sair</button>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="profile-modal">
+            <h2>Editar Perfil</h2>
+            <img class="avatar-preview" id="avatarPreview" src="https://via.placeholder.com/100/1a1a2e/00d2ff?text=P" onclick="document.getElementById('avatarInput').click()" title="Clique para alterar foto">
+            <input type="file" id="avatarInput" accept="image/*" style="display:none">
+            <input type="text" id="profileNameInput" placeholder="Nome de utilizador">
+            <button class="btn-save" onclick="guardarProfile()">Guardar</button>
+            <br>
+            <button class="btn-close" onclick="fecharProfile()">Cancelar</button>
+        </div>
     </div>
 
     <!-- LOGIN MODAL -->
@@ -769,9 +887,9 @@
         localStorage.setItem('chromecore_session', email);
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('userBar').style.display = 'flex';
-        document.getElementById('userEmail').textContent = email;
         document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
+        carregarProfile();
         iniciarPlayer();
     }
 
@@ -789,6 +907,47 @@
         resultadosPesquisa.innerHTML = '';
         indiceAtual = 0;
     }
+
+    // --- Profile ---
+    function getProfileKey() { return 'chromecore_profile_' + usuarioAtual; }
+
+    function carregarProfile() {
+        const data = JSON.parse(localStorage.getItem(getProfileKey()) || '{}');
+        const nome = data.nome || usuarioAtual;
+        const avatar = data.avatar || 'https://via.placeholder.com/32/1a1a2e/00d2ff?text=P';
+        document.getElementById('profileName').textContent = nome;
+        document.getElementById('profileAvatar').src = avatar;
+        document.getElementById('profileNameInput').value = nome;
+        document.getElementById('avatarPreview').src = avatar;
+    }
+
+    function abrirProfile() {
+        carregarProfile();
+        document.getElementById('profileOverlay').classList.add('show');
+    }
+
+    function fecharProfile() {
+        document.getElementById('profileOverlay').classList.remove('show');
+    }
+
+    function guardarProfile() {
+        const nome = document.getElementById('profileNameInput').value.trim() || usuarioAtual;
+        const avatar = document.getElementById('avatarPreview').src;
+        localStorage.setItem(getProfileKey(), JSON.stringify({ nome: nome, avatar: avatar }));
+        document.getElementById('profileName').textContent = nome;
+        document.getElementById('profileAvatar').src = avatar;
+        fecharProfile();
+    }
+
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('avatarPreview').src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
 
     // =============================================
     // PLAYER CORE
