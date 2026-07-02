@@ -544,7 +544,7 @@
     <!-- LOGIN MODAL -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
-            <h1>🎵 YourOWNspace</h1>
+            <h1>YourOWNspace</h1>
             <p class="sub" id="loginSub">Inicia sessão para guardar a tua biblioteca</p>
             <div class="erro" id="loginErro"></div>
             <div class="sucesso" id="loginSucesso"></div>
@@ -558,7 +558,7 @@
     <div class="main-container">
     <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
     <div class="painel-pesquisa">
-        <h2>💭 My Mind</h2>
+        <h2>My Mind</h2>
         <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
         <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
         <button class="btn-add-musica" onclick="document.getElementById('fileInput').click()">+ Add Music Files</button>
@@ -581,21 +581,21 @@
         </div>
 
         <div class="click-wheel">
-            <span class="wheel-btn menu" onclick="musicaAnterior()" title="Anterior">⏮</span>
-            <span class="wheel-btn prev" onclick="musicaAnterior()" title="Anterior">◀</span>
+            <span class="wheel-btn menu" onclick="musicaAnterior()" title="Anterior">&lt;&lt;</span>
+            <span class="wheel-btn prev" onclick="musicaAnterior()" title="Anterior">&lt;</span>
             <button class="wheel-center" id="btnPlay" onclick="alternarPlay()" title="Play/Pause"></button>
-            <span class="wheel-btn next" onclick="proximaMusica()" title="Seguinte">▶</span>
+            <span class="wheel-btn next" onclick="proximaMusica()" title="Seguinte">&gt;</span>
         </div>
 
         <div class="volume-container">
-            <span style="color:#ff6ec7;">🔊</span>
+            <span style="color:#ff6ec7;font-size:14px;">VOL</span>
             <input type="range" id="volume" min="0" max="1" step="0.05" value="0.7">
         </div>
     </div>
 
     <!-- PAINEL DIREITO: LETRA -->
     <div class="painel-letra">
-        <h2>📝 Lyrics</h2>
+        <h2>Lyrics</h2>
         <div class="letra-content" id="letraContent">
             <div class="sem-letra">Seleciona uma música<br>para ver a letra</div>
         </div>
@@ -773,6 +773,7 @@
 
     function entrar(email) {
         usuarioAtual = email;
+        localStorage.setItem('chromecore_session', email);
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('userBar').style.display = 'flex';
         document.getElementById('userEmail').textContent = email;
@@ -783,6 +784,7 @@
 
     function logout() {
         usuarioAtual = null;
+        localStorage.removeItem('chromecore_session');
         document.getElementById('loginOverlay').style.display = 'flex';
         document.getElementById('userBar').style.display = 'none';
         musicas.length = 0;
@@ -815,6 +817,59 @@
     let indiceAtual = 0;
     let indiceLinhaAtual = -1;
 
+    function atualizarMediaSession() {
+        if ('mediaSession' in navigator) {
+            const musica = musicas[indiceAtual];
+            if (!musica) return;
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: musica.nome,
+                artist: musica.artista || 'Desconhecido',
+                album: 'YourOWNspace',
+                artwork: [{ src: musica.capa, sizes: '256x256', type: 'image/jpeg' }]
+            });
+        }
+    }
+
+    function buscarLetraAPI(artista, nome) {
+        const url = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
+        letraContent.innerHTML = '<div class="sem-letra">A carregar letra...</div>';
+        fetch(url).then(function(res) {
+            if (!res.ok) throw new Error('Não encontrada');
+            return res.json();
+        }).then(function(data) {
+            if (data.lyrics) {
+                const linhasTexto = data.lyrics.split('\n').filter(function(l) { return l.trim() !== ''; });
+                const linhas = [];
+                linhasTexto.forEach(function(texto, i) {
+                    linhas.push({ tempo: i, texto: texto });
+                });
+                const musica = musicas[indiceAtual];
+                musica.letra = linhas;
+                mostrarLetra(linhas);
+                if (audio.duration) {
+                    redistribuirTemposLetra(audio.duration);
+                }
+            }
+        }).catch(function() {
+            const musica = musicas[indiceAtual];
+            if (musica.letra && musica.letra.length > 0) {
+                mostrarLetra(musica.letra);
+            } else {
+                letraContent.innerHTML = '<div class="sem-letra">Letra não encontrada</div>';
+            }
+        });
+    }
+
+    function redistribuirTemposLetra(duration) {
+        const musica = musicas[indiceAtual];
+        if (!musica || !musica.letra || musica.letra.length === 0) return;
+        const linhas = musica.letra;
+        const intervalo = duration / linhas.length;
+        linhas.forEach(function(linha, i) {
+            linha.tempo = i * intervalo;
+        });
+    }
+
     function carregarMusica(index) {
         if (index < 0 || index >= musicas.length) return;
         const musica = musicas[index];
@@ -827,6 +882,8 @@
         mostrarLetra(musica.letra);
         atualizarPesquisa();
         indiceLinhaAtual = -1;
+        atualizarMediaSession();
+        buscarLetraAPI(musica.artista, musica.nome);
     }
 
     function alternarPlay() {
@@ -913,6 +970,12 @@
 
     audio.addEventListener('loadedmetadata', function() {
         tempoTotalEl.textContent = formatarTempo(audio.duration);
+        const musica = musicas[indiceAtual];
+        if (musica && musica.letra && musica.letra.length > 0) {
+            if (musica.letra[0].tempo === 0 && musica.letra.length > 1 && musica.letra[1].tempo === 1) {
+                redistribuirTemposLetra(audio.duration);
+            }
+        }
     });
 
     audio.addEventListener('ended', function() {
@@ -923,6 +986,14 @@
         tituloEl.textContent = 'Erro ao carregar música';
         artistaEl.textContent = 'Verifica o nome do ficheiro';
     });
+
+    // --- Media Session (controlos do sistema / teclas multimedia) ---
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
+        navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
+        navigator.mediaSession.setActionHandler('previoustrack', function() { musicaAnterior(); });
+        navigator.mediaSession.setActionHandler('nexttrack', function() { proximaMusica(); });
+    }
 
     // --- Barra de progresso ---
     barraProgresso.addEventListener('input', function() {
@@ -1032,6 +1103,19 @@
             }
         });
     }
+
+    // --- Auto-login (sessão persistente) ---
+    (function() {
+        const sessao = localStorage.getItem('chromecore_session');
+        if (sessao) {
+            const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+            if (users[sessao]) {
+                entrar(sessao);
+                return;
+            }
+        }
+        document.getElementById('loginOverlay').style.display = 'flex';
+    })();
 </script>
 
 </body>
