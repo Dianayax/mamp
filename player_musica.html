@@ -107,7 +107,7 @@
         }
         .resultados-pesquisa {
             margin-top: 15px;
-            max-height: 350px;
+            max-height: 300px;
             overflow-y: auto;
         }
         .resultados-pesquisa::-webkit-scrollbar {
@@ -168,13 +168,15 @@
             color: white;
         }
         .ipod-ecra .capa {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
+            width: 100%;
+            max-width: 240px;
+            height: 180px;
+            border-radius: 12px;
             object-fit: cover;
-            margin: 0 auto 10px;
+            margin: 0 auto 12px;
             display: block;
             border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .ipod-ecra .titulo {
             font-size: 16px;
@@ -836,33 +838,68 @@
         }).catch(function() { return false; });
     }
 
+    function processarTextoLetra(texto) {
+        const textos = texto.split('\n');
+        const linhas = [];
+        textos.forEach(function(t) {
+            if (t.trim() !== '') {
+                linhas.push({ tempo: 0, texto: t });
+            }
+        });
+        return linhas;
+    }
+
     function buscarLetraAPI(artista, nome) {
-        const url = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
+        if (!artista || !nome) return;
         letraContent.innerHTML = '<div class="sem-letra">A carregar letra...</div>';
-        fetch(url).then(function(res) {
-            if (!res.ok) throw new Error('Não encontrada');
+        const url1 = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
+        const url2 = 'https://api.textyl.co/api/lyrics?q=' + encodeURIComponent(artista + ' ' + nome);
+        fetch(url1, { mode: 'cors' }).then(function(res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             return res.json();
         }).then(function(data) {
-            if (data.lyrics) {
-                const linhasTexto = data.lyrics.split('\n').filter(function(l) { return l.trim() !== ''; });
-                const linhas = [];
-                linhasTexto.forEach(function(texto, i) {
-                    linhas.push({ tempo: i, texto: texto });
-                });
-                const musica = musicas[indiceAtual];
+            if (!data.lyrics) throw new Error('Sem letra');
+            const linhas = processarTextoLetra(data.lyrics);
+            if (linhas.length === 0) throw new Error('Vazio');
+            const musica = musicas[indiceAtual];
+            if (musica) {
                 musica.letra = linhas;
                 mostrarLetra(linhas);
-                if (audio.duration) {
+                if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
                     redistribuirTemposLetra(audio.duration);
                 }
             }
-        }).catch(function() {
-            const musica = musicas[indiceAtual];
-            if (musica.letra && musica.letra.length > 0) {
-                mostrarLetra(musica.letra);
-            } else {
-                letraContent.innerHTML = '<div class="sem-letra">Letra não encontrada</div>';
-            }
+        }).catch(function(err) {
+            console.warn('lyrics.ovh falhou:', err.message, '- a tentar textyl.co...');
+            fetch(url2, { mode: 'cors' }).then(function(res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            }).then(function(data) {
+                if (!data || data.length === 0) throw new Error('Sem letra');
+                const linhas = [];
+                data.forEach(function(item) {
+                    if (item.lyrics && item.lyrics.trim() !== '') {
+                        linhas.push({ tempo: 0, texto: item.lyrics });
+                    }
+                });
+                if (linhas.length === 0) throw new Error('Vazio');
+                const musica = musicas[indiceAtual];
+                if (musica) {
+                    musica.letra = linhas;
+                    mostrarLetra(linhas);
+                    if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+                        redistribuirTemposLetra(audio.duration);
+                    }
+                }
+            }).catch(function(err2) {
+                console.warn('textyl.co tambem falhou:', err2.message);
+                const musica = musicas[indiceAtual];
+                if (musica && musica.letra && musica.letra.length > 0 && musica.letra[0].texto !== '') {
+                    mostrarLetra(musica.letra);
+                } else {
+                    letraContent.innerHTML = '<div class="sem-letra">Letra nao encontrada</div>';
+                }
+            });
         });
     }
 
@@ -889,8 +926,10 @@
         atualizarPesquisa();
         indiceLinhaAtual = -1;
         atualizarMediaSession();
-        buscarCapaAPI(musica.artista, musica.nome);
-        buscarLetraAPI(musica.artista, musica.nome);
+        if (musica.artista && musica.artista !== 'Desconhecido') {
+            buscarCapaAPI(musica.artista, musica.nome);
+            buscarLetraAPI(musica.artista, musica.nome);
+        }
     }
 
     function alternarPlay() {
@@ -1019,10 +1058,6 @@
     // --- Pesquisa de artistas ---
     function atualizarPesquisa() {
         const termo = pesquisaInput.value.toLowerCase().trim();
-        if (!termo) {
-            resultadosPesquisa.innerHTML = '';
-            return;
-        }
         const filtradas = musicas.filter(function(m) {
             return (m.artista && m.artista.toLowerCase().includes(termo)) ||
                    (m.nome && m.nome.toLowerCase().includes(termo));
@@ -1060,13 +1095,20 @@
         for (let i = 0; i < ficheiros.length; i++) {
             const f = ficheiros[i];
             if (!f.type.startsWith('audio/')) continue;
-            const nome = f.name.replace(/\.[^.]+$/, '');
+            const nomeCompleto = f.name.replace(/\.[^.]+$/, '');
+            let nome = nomeCompleto;
+            let artista = 'Desconhecido';
+            const separador = nomeCompleto.indexOf(' - ');
+            if (separador > 0) {
+                artista = nomeCompleto.substring(0, separador).trim();
+                nome = nomeCompleto.substring(separador + 3).trim();
+            }
             const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
             const promise = guardarAudioNoDB(dbId, f).then(function() {
                 const url = URL.createObjectURL(f);
                 musicas.push({
                     nome: nome,
-                    artista: "Desconhecido",
+                    artista: artista,
                     ficheiro: url,
                     capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
                     letra: [],
@@ -1080,7 +1122,6 @@
             if (count > 0) {
                 const firstNew = musicas.length - count;
                 carregarMusica(firstNew);
-                resultadosPesquisa.style.maxHeight = '250px';
                 pesquisaInput.value = '';
                 atualizarPesquisa();
                 guardarBiblioteca();
@@ -1108,6 +1149,7 @@
                 tituloEl.textContent = 'Bem-vindo(a)!';
                 artistaEl.textContent = 'Adiciona músicas com os botões abaixo';
             }
+            atualizarPesquisa();
         });
     }
 
