@@ -280,6 +280,8 @@
             color: transparent;
             position: relative;
             overflow: hidden;
+            animation: girarCD 4s linear infinite;
+            animation-play-state: paused;
         }
         .wheel-center::after {
             content: '';
@@ -292,6 +294,13 @@
         }
         .wheel-center:hover {
             transform: scale(1.05);
+        }
+        @keyframes girarCD {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .ipod.tocando .wheel-center {
+            animation-play-state: running;
         }
 
         /* ===== PAINEL DE LETRA (DIREITA) ===== */
