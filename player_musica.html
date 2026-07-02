@@ -49,8 +49,8 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 25px;
-            width: 280px;
-            min-width: 220px;
+            width: 340px;
+            min-width: 280px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
@@ -63,7 +63,7 @@
             margin-bottom: 15px;
             text-align: center;
         }
-        .painel-pesquisa input {
+        .painel-pesquisa input[type="text"] {
             width: 100%;
             padding: 12px 15px;
             border-radius: 25px;
@@ -74,12 +74,36 @@
             outline: none;
             transition: 0.3s;
         }
-        .painel-pesquisa input:focus {
+        .painel-pesquisa input[type="text"]:focus {
             border-color: #ff6ec7;
             box-shadow: 0 0 15px rgba(255,110,199,0.3);
         }
-        .painel-pesquisa input::placeholder {
+        .painel-pesquisa input[type="text"]::placeholder {
             color: rgba(255,255,255,0.4);
+        }
+        .btn-add-musica {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .btn-add-musica:hover {
+            background: rgba(255,110,199,0.2);
+            border-color: #ff6ec7;
+            color: #ff6ec7;
+        }
+        .btn-add-musica.highlight {
+            border-color: #ff6ec7;
+            color: #ff6ec7;
+            background: rgba(255,110,199,0.1);
         }
         .resultados-pesquisa {
             margin-top: 15px;
@@ -376,9 +400,13 @@
 <div class="main-container">
     <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
     <div class="painel-pesquisa">
-        <h2>🔍 Pesquisar</h2>
+        <h2>💭 My Mind</h2>
         <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
         <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
+        <button class="btn-add-musica" onclick="document.getElementById('fileInput').click()">+ Add Music Files</button>
+        <button class="btn-add-musica" onclick="document.getElementById('folderInput').click()">+ Add Music Folder</button>
+        <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
+        <input type="file" id="folderInput" webkitdirectory multiple style="display:none">
     </div>
 
     <!-- IPOD (CENTRO) -->
@@ -409,7 +437,7 @@
 
     <!-- PAINEL DIREITO: LETRA -->
     <div class="painel-letra">
-        <h2>🎵 Letra</h2>
+        <h2>📝 Lyrics</h2>
         <div class="letra-content" id="letraContent">
             <div class="sem-letra">Seleciona uma música<br>para ver a letra</div>
         </div>
@@ -439,24 +467,98 @@
         artista: "Artista A",
         ficheiro: "musica1.mp3",
         capa: "https://via.placeholder.com/100/1a1a2e/00d2ff?text=M1",
-        letra: "Esta é a letra da Minha Música 1.\n\nVerso 1:\nLorem ipsum dolor sit amet\nConsectetur adipiscing elit\n\nRefrão:\nEsta é a minha canção\nUma linda melodia\n\nVerso 2:\nSed do eiusmod tempor\nIncididunt ut labore\n\nRefrão:\nEsta é a minha canção\nUma linda melodia"
+        letra: [
+            { tempo: 0, texto: "♫ Minha Música 1 ♫" },
+            { tempo: 3, texto: "Verso 1:" },
+            { tempo: 5, texto: "Lorem ipsum dolor sit amet" },
+            { tempo: 9, texto: "Consectetur adipiscing elit" },
+            { tempo: 13, texto: "Sed do eiusmod tempor" },
+            { tempo: 17, texto: "Incididunt ut labore" },
+            { tempo: 21, texto: "" },
+            { tempo: 22, texto: "Refrão:" },
+            { tempo: 24, texto: "Esta é a minha canção" },
+            { tempo: 28, texto: "Uma linda melodia" },
+            { tempo: 32, texto: "Que o coração alegra" },
+            { tempo: 36, texto: "E nos faz sorrir" },
+            { tempo: 40, texto: "" },
+            { tempo: 41, texto: "Verso 2:" },
+            { tempo: 43, texto: "Duis aute irure dolor" },
+            { tempo: 47, texto: "In reprehenderit voluptate" },
+            { tempo: 51, texto: "Velit esse cillum dolore" },
+            { tempo: 55, texto: "Eu fugiat nulla pariatur" },
+            { tempo: 59, texto: "" },
+            { tempo: 60, texto: "Refrão:" },
+            { tempo: 62, texto: "Esta é a minha canção" },
+            { tempo: 66, texto: "Uma linda melodia" },
+            { tempo: 70, texto: "Que o coração alegra" },
+            { tempo: 74, texto: "E nos faz sorrir" }
+        ]
     }, {
         nome: "Outra Música",
         artista: "Artista B",
         ficheiro: "musica2.mp3",
         capa: "https://via.placeholder.com/100/1a1a2e/ff6b6b?text=M2",
-        letra: "Letra da Outra Música.\n\nVerso 1:\nUt enim ad minim veniam\nQuis nostrud exercitation\n\nRefrão:\nOutra música a tocar\nA fazer-nos sonhar\n\nPonte:\nDuis aute irure dolor\nIn reprehenderit voluptate"
+        letra: [
+            { tempo: 0, texto: "♫ Outra Música ♫" },
+            { tempo: 4, texto: "Verso 1:" },
+            { tempo: 6, texto: "Ut enim ad minim veniam" },
+            { tempo: 10, texto: "Quis nostrud exercitation" },
+            { tempo: 14, texto: "Ullamco laboris nisi" },
+            { tempo: 18, texto: "Ut aliquip ex ea commodo" },
+            { tempo: 22, texto: "" },
+            { tempo: 23, texto: "Refrão:" },
+            { tempo: 25, texto: "Outra música a tocar" },
+            { tempo: 29, texto: "A fazer-nos sonhar" },
+            { tempo: 33, texto: "Com melodias sem fim" },
+            { tempo: 37, texto: "A nos embalar" },
+            { tempo: 41, texto: "" },
+            { tempo: 42, texto: "Ponte:" },
+            { tempo: 44, texto: "Duis aute irure dolor" },
+            { tempo: 48, texto: "In reprehenderit voluptate" },
+            { tempo: 52, texto: "Velit esse cillum" },
+            { tempo: 56, texto: "Dolore eu fugiat" },
+            { tempo: 60, texto: "" },
+            { tempo: 61, texto: "Refrão:" },
+            { tempo: 63, texto: "Outra música a tocar" },
+            { tempo: 67, texto: "A fazer-nos sonhar" },
+            { tempo: 71, texto: "Com melodias sem fim" },
+            { tempo: 75, texto: "A nos embalar" }
+        ]
     }, {
         nome: "Terceira Faixa",
         artista: "Artista C",
         ficheiro: "musica3.mp3",
         capa: "https://via.placeholder.com/100/1a1a2e/4ecdc4?text=M3",
-        letra: "Letra da Terceira Faixa.\n\nVerso 1:\nExcepteur sint occaecat\nCupidatat non proident\n\nRefrão:\nTerceira faixa no ar\nVamos todos cantar\n\nFinal:\nSunt in culpa qui officia\nDeserunt mollit anim id est laborum"
+        letra: [
+            { tempo: 0, texto: "♫ Terceira Faixa ♫" },
+            { tempo: 3, texto: "Verso 1:" },
+            { tempo: 5, texto: "Excepteur sint occaecat" },
+            { tempo: 9, texto: "Cupidatat non proident" },
+            { tempo: 13, texto: "Sunt in culpa qui officia" },
+            { tempo: 17, texto: "Deserunt mollit anim id est" },
+            { tempo: 21, texto: "" },
+            { tempo: 22, texto: "Refrão:" },
+            { tempo: 24, texto: "Terceira faixa no ar" },
+            { tempo: 28, texto: "Vamos todos cantar" },
+            { tempo: 32, texto: "Eleva a voz com emoção" },
+            { tempo: 36, texto: "A música a vibrar" },
+            { tempo: 40, texto: "" },
+            { tempo: 41, texto: "Final:" },
+            { tempo: 43, texto: "Sunt in culpa qui officia" },
+            { tempo: 47, texto: "Deserunt mollit anim id est" },
+            { tempo: 51, texto: "Laborum et dolorum" },
+            { tempo: 55, texto: "Fugiat nulla pariatur" },
+            { tempo: 59, texto: "" },
+            { tempo: 60, texto: "Refrão:" },
+            { tempo: 62, texto: "Terceira faixa no ar" },
+            { tempo: 66, texto: "Vamos todos cantar" },
+            { tempo: 70, texto: "Eleva a voz com emoção" },
+            { tempo: 74, texto: "A música a vibrar" }
+        ]
     }];
 
     let indiceAtual = 0;
-    let linhaAtual = -1;
-    let intervaloLetra = null;
+    let indiceLinhaAtual = -1;
 
     function carregarMusica(index) {
         if (index < 0 || index >= musicas.length) return;
@@ -469,6 +571,7 @@
         tempoTotalEl.textContent = '0:00';
         mostrarLetra(musica.letra);
         atualizarPesquisa();
+        indiceLinhaAtual = -1;
     }
 
     function alternarPlay() {
@@ -499,45 +602,45 @@
     }
 
     function mostrarLetra(letra) {
-        if (!letra) {
+        if (!letra || letra.length === 0) {
             letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível</div>';
             return;
         }
-        const linhas = letra.split('\n');
         let html = '';
-        linhas.forEach(function(linha, i) {
-            if (linha.trim() === '') {
+        letra.forEach(function(linha, i) {
+            if (linha.texto.trim() === '') {
                 html += '<br>';
             } else {
-                html += '<p data-linha="' + i + '">' + linha + '</p>';
+                html += '<p data-linha="' + i + '">' + linha.texto + '</p>';
             }
         });
         letraContent.innerHTML = html;
+    }
 
-        if (intervaloLetra) clearInterval(intervaloLetra);
-        linhaAtual = -1;
-        intervaloLetra = setInterval(function() {
-            if (audio.paused || !audio.duration) return;
-            const progresso = audio.currentTime / audio.duration;
-            const totalLinhas = linhas.filter(function(l) { return l.trim() !== ''; }).length;
-            if (totalLinhas === 0) return;
-            const novaLinha = Math.min(
-                Math.floor(progresso * totalLinhas),
-                totalLinhas - 1
-            );
-            if (novaLinha !== linhaAtual) {
-                if (linhaAtual >= 0) {
-                    const antigo = letraContent.querySelector('p[data-linha="' + linhaAtual + '"]');
-                    if (antigo) antigo.classList.remove('destacado');
-                }
-                linhaAtual = novaLinha;
-                const novo = letraContent.querySelector('p[data-linha="' + linhaAtual + '"]');
-                if (novo) {
-                    novo.classList.add('destacado');
-                    novo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+    function sincronizarLetra() {
+        const musica = musicas[indiceAtual];
+        if (!musica || !musica.letra || musica.letra.length === 0) return;
+        const linhas = musica.letra;
+        let novaLinha = -1;
+        for (let i = linhas.length - 1; i >= 0; i--) {
+            if (audio.currentTime >= linhas[i].tempo) {
+                novaLinha = i;
+                break;
             }
-        }, 200);
+        }
+        if (novaLinha === indiceLinhaAtual) return;
+        if (indiceLinhaAtual >= 0) {
+            const antigo = letraContent.querySelector('p[data-linha="' + indiceLinhaAtual + '"]');
+            if (antigo) antigo.classList.remove('destacado');
+        }
+        indiceLinhaAtual = novaLinha;
+        if (novaLinha >= 0) {
+            const novo = letraContent.querySelector('p[data-linha="' + novaLinha + '"]');
+            if (novo) {
+                novo.classList.add('destacado');
+                novo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
     }
 
     // --- Eventos do áudio ---
@@ -557,6 +660,7 @@
             barraProgresso.value = percent;
         }
         tempoAtualEl.textContent = formatarTempo(audio.currentTime);
+        sincronizarLetra();
     });
 
     audio.addEventListener('loadedmetadata', function() {
@@ -622,6 +726,42 @@
     }
 
     pesquisaInput.addEventListener('input', atualizarPesquisa);
+
+    // --- Importar músicas do computador ---
+    function adicionarMusicas(ficheiros) {
+        let count = 0;
+        for (let i = 0; i < ficheiros.length; i++) {
+            const f = ficheiros[i];
+            if (!f.type.startsWith('audio/')) continue;
+            const nome = f.name.replace(/\.[^.]+$/, '');
+            const url = URL.createObjectURL(f);
+            musicas.push({
+                nome: nome,
+                artista: "Desconhecido",
+                ficheiro: url,
+                capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
+                letra: []
+            });
+            count++;
+        }
+        if (count > 0) {
+            const firstNew = musicas.length - count;
+            carregarMusica(firstNew);
+            resultadosPesquisa.style.maxHeight = '250px';
+            pesquisaInput.value = '';
+            atualizarPesquisa();
+        }
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        adicionarMusicas(e.target.files);
+        this.value = '';
+    });
+
+    document.getElementById('folderInput').addEventListener('change', function(e) {
+        adicionarMusicas(e.target.files);
+        this.value = '';
+    });
 
     // --- Inicialização ---
     carregarMusica(0);
