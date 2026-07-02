@@ -392,6 +392,135 @@
             text-shadow: 0 0 10px rgba(255,110,199,0.5), 0 0 30px rgba(0,210,255,0.3);
         }
 
+        /* === LOGIN MODAL === */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+        .login-modal {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 30px;
+            padding: 40px;
+            width: 360px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .login-modal h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #00d2ff;
+            text-shadow: 0 0 20px rgba(0,210,255,0.4);
+        }
+        .login-modal p.sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+        .login-modal input {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .login-modal input:focus {
+            border-color: #ff6ec7;
+            box-shadow: 0 0 15px rgba(255,110,199,0.3);
+        }
+        .login-modal input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+        .login-modal .btn-login {
+            width: 100%;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #ff6ec7, #00d2ff);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+        .login-modal .btn-login:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(255,110,199,0.4);
+        }
+        .login-modal .btn-toggle {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .login-modal .btn-toggle:hover {
+            color: #00d2ff;
+        }
+        .login-modal .erro {
+            color: #ff6ec7;
+            font-size: 12px;
+            margin-bottom: 10px;
+            min-height: 18px;
+        }
+        .login-modal .sucesso {
+            color: #00d2ff;
+            font-size: 12px;
+            margin-bottom: 10px;
+            min-height: 18px;
+        }
+
+        /* === USER BAR === */
+        .user-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            font-size: 13px;
+        }
+        .user-bar .email {
+            color: rgba(255,255,255,0.6);
+        }
+        .user-bar .btn-sair {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.5);
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.3s;
+        }
+        .user-bar .btn-sair:hover {
+            border-color: #ff6ec7;
+            color: #ff6ec7;
+        }
+
         @media (max-width: 900px) {
             .main-container {
                 flex-direction: column;
@@ -406,7 +535,27 @@
 </head>
 <body>
 
-<div class="main-container">
+    <!-- USER BAR -->
+    <div class="user-bar" id="userBar" style="display:none">
+        <span class="email" id="userEmail"></span>
+        <button class="btn-sair" onclick="logout()">Sair</button>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-modal">
+            <h1>🎵 Chromecore</h1>
+            <p class="sub" id="loginSub">Inicia sessão para guardar a tua biblioteca</p>
+            <div class="erro" id="loginErro"></div>
+            <div class="sucesso" id="loginSucesso"></div>
+            <input type="email" id="loginEmail" placeholder="Email" autocomplete="email">
+            <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+            <button class="btn-login" id="loginBtn" onclick="handleLogin()">Entrar</button>
+            <button class="btn-toggle" id="loginToggle" onclick="toggleLoginMode()">Não tens conta? Registar</button>
+        </div>
+    </div>
+
+    <div class="main-container">
     <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
     <div class="painel-pesquisa">
         <h2>💭 My Mind</h2>
@@ -458,6 +607,197 @@
 </audio>
 
 <script>
+    // =============================================
+    // AUTH / STORAGE SYSTEM
+    // =============================================
+    let usuarioAtual = null;
+    let loginMode = 'login';
+    const DB_NAME = 'ChromecoreDB';
+    const DB_VER = 1;
+
+    function hash(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+            h = ((h << 5) - h) + str.charCodeAt(i);
+            h |= 0;
+        }
+        return 'h' + Math.abs(h).toString(36);
+    }
+
+    function openDB() {
+        return new Promise(function(resolve, reject) {
+            const req = indexedDB.open(DB_NAME, DB_VER);
+            req.onupgradeneeded = function(e) {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('audios')) {
+                    db.createObjectStore('audios', { keyPath: 'id' });
+                }
+            };
+            req.onsuccess = function(e) { resolve(e.target.result); };
+            req.onerror = function(e) { reject(e.target.error); };
+        });
+    }
+
+    function guardarAudioNoDB(id, blob) {
+        return openDB().then(function(db) {
+            return new Promise(function(resolve, reject) {
+                const tx = db.transaction('audios', 'readwrite');
+                tx.objectStore('audios').put({ id: id, blob: blob });
+                tx.oncomplete = function() { resolve(); };
+                tx.onerror = function(e) { reject(e.target.error); };
+            });
+        });
+    }
+
+    function lerAudioDoDB(id) {
+        return openDB().then(function(db) {
+            return new Promise(function(resolve, reject) {
+                const tx = db.transaction('audios', 'readonly');
+                const req = tx.objectStore('audios').get(id);
+                req.onsuccess = function() {
+                    resolve(req.result ? req.result.blob : null);
+                };
+                req.onerror = function(e) { reject(e.target.error); };
+            });
+        });
+    }
+
+    function removerAudioDoDB(id) {
+        return openDB().then(function(db) {
+            return new Promise(function(resolve, reject) {
+                const tx = db.transaction('audios', 'readwrite');
+                tx.objectStore('audios').delete(id);
+                tx.oncomplete = function() { resolve(); };
+                tx.onerror = function(e) { reject(e.target.error); };
+            });
+        });
+    }
+
+    function getStorageKey() {
+        return 'chromecore_lib_' + usuarioAtual;
+    }
+
+    function guardarBiblioteca() {
+        if (!usuarioAtual) return;
+        const meta = musicas.map(function(m) {
+            return {
+                nome: m.nome,
+                artista: m.artista,
+                capa: m.capa,
+                letra: m.letra,
+                dbId: m.dbId || null
+            };
+        });
+        localStorage.setItem(getStorageKey(), JSON.stringify(meta));
+    }
+
+    function carregarBiblioteca() {
+        const data = localStorage.getItem(getStorageKey());
+        if (!data) return Promise.resolve([]);
+        const meta = JSON.parse(data);
+        const promises = meta.map(function(item) {
+            if (item.dbId) {
+                return lerAudioDoDB(item.dbId).then(function(blob) {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        return {
+                            nome: item.nome,
+                            artista: item.artista,
+                            ficheiro: url,
+                            capa: item.capa,
+                            letra: item.letra || [],
+                            dbId: item.dbId,
+                            _blob: blob
+                        };
+                    }
+                    return null;
+                });
+            }
+            return Promise.resolve(null);
+        });
+        return Promise.all(promises).then(function(results) {
+            return results.filter(function(r) { return r !== null; });
+        });
+    }
+
+    // =============================================
+    // LOGIN / REGISTER
+    // =============================================
+    function toggleLoginMode() {
+        loginMode = (loginMode === 'login') ? 'register' : 'login';
+        document.getElementById('loginBtn').textContent = (loginMode === 'login') ? 'Entrar' : 'Criar Conta';
+        document.getElementById('loginToggle').textContent = (loginMode === 'login')
+            ? 'Não tens conta? Registar'
+            : 'Já tens conta? Entrar';
+        document.getElementById('loginErro').textContent = '';
+        document.getElementById('loginSucesso').textContent = '';
+        document.getElementById('loginSub').textContent = (loginMode === 'login')
+            ? 'Inicia sessão para acederes à tua biblioteca'
+            : 'Cria uma conta para guardares as tuas músicas';
+    }
+
+    function handleLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const erroEl = document.getElementById('loginErro');
+        const sucessoEl = document.getElementById('loginSucesso');
+        erroEl.textContent = '';
+        sucessoEl.textContent = '';
+
+        if (!email || !password) {
+            erroEl.textContent = 'Preenche o email e a password.';
+            return;
+        }
+
+        if (loginMode === 'register') {
+            const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+            if (users[email]) {
+                erroEl.textContent = 'Este email já está registado.';
+                return;
+            }
+            users[email] = hash(password);
+            localStorage.setItem('chromecore_users', JSON.stringify(users));
+            sucessoEl.textContent = 'Conta criada! A fazer login...';
+            setTimeout(function() {
+                entrar(email);
+            }, 500);
+        } else {
+            const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+            if (!users[email] || users[email] !== hash(password)) {
+                erroEl.textContent = 'Email ou password incorretos.';
+                return;
+            }
+            entrar(email);
+        }
+    }
+
+    function entrar(email) {
+        usuarioAtual = email;
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('userBar').style.display = 'flex';
+        document.getElementById('userEmail').textContent = email;
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        iniciarPlayer();
+    }
+
+    function logout() {
+        usuarioAtual = null;
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('userBar').style.display = 'none';
+        musicas.length = 0;
+        audio.src = '';
+        tituloEl.textContent = 'Nenhuma música';
+        artistaEl.textContent = '---';
+        capaEl.src = 'https://via.placeholder.com/100/1a1a2e/00d2ff?text=M%C3%BAsica';
+        letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
+        resultadosPesquisa.innerHTML = '';
+        indiceAtual = 0;
+    }
+
+    // =============================================
+    // PLAYER CORE
+    // =============================================
     const audio = document.getElementById('audio');
     const btnPlay = document.getElementById('btnPlay');
     const barraProgresso = document.getElementById('progresso');
@@ -471,101 +811,7 @@
     const pesquisaInput = document.getElementById('pesquisaInput');
     const resultadosPesquisa = document.getElementById('resultadosPesquisa');
 
-    const musicas = [{
-        nome: "Minha Música 1",
-        artista: "Artista A",
-        ficheiro: "musica1.mp3",
-        capa: "https://via.placeholder.com/100/1a1a2e/00d2ff?text=M1",
-        letra: [
-            { tempo: 0, texto: "♫ Minha Música 1 ♫" },
-            { tempo: 3, texto: "Verso 1:" },
-            { tempo: 5, texto: "Lorem ipsum dolor sit amet" },
-            { tempo: 9, texto: "Consectetur adipiscing elit" },
-            { tempo: 13, texto: "Sed do eiusmod tempor" },
-            { tempo: 17, texto: "Incididunt ut labore" },
-            { tempo: 21, texto: "" },
-            { tempo: 22, texto: "Refrão:" },
-            { tempo: 24, texto: "Esta é a minha canção" },
-            { tempo: 28, texto: "Uma linda melodia" },
-            { tempo: 32, texto: "Que o coração alegra" },
-            { tempo: 36, texto: "E nos faz sorrir" },
-            { tempo: 40, texto: "" },
-            { tempo: 41, texto: "Verso 2:" },
-            { tempo: 43, texto: "Duis aute irure dolor" },
-            { tempo: 47, texto: "In reprehenderit voluptate" },
-            { tempo: 51, texto: "Velit esse cillum dolore" },
-            { tempo: 55, texto: "Eu fugiat nulla pariatur" },
-            { tempo: 59, texto: "" },
-            { tempo: 60, texto: "Refrão:" },
-            { tempo: 62, texto: "Esta é a minha canção" },
-            { tempo: 66, texto: "Uma linda melodia" },
-            { tempo: 70, texto: "Que o coração alegra" },
-            { tempo: 74, texto: "E nos faz sorrir" }
-        ]
-    }, {
-        nome: "Outra Música",
-        artista: "Artista B",
-        ficheiro: "musica2.mp3",
-        capa: "https://via.placeholder.com/100/1a1a2e/ff6b6b?text=M2",
-        letra: [
-            { tempo: 0, texto: "♫ Outra Música ♫" },
-            { tempo: 4, texto: "Verso 1:" },
-            { tempo: 6, texto: "Ut enim ad minim veniam" },
-            { tempo: 10, texto: "Quis nostrud exercitation" },
-            { tempo: 14, texto: "Ullamco laboris nisi" },
-            { tempo: 18, texto: "Ut aliquip ex ea commodo" },
-            { tempo: 22, texto: "" },
-            { tempo: 23, texto: "Refrão:" },
-            { tempo: 25, texto: "Outra música a tocar" },
-            { tempo: 29, texto: "A fazer-nos sonhar" },
-            { tempo: 33, texto: "Com melodias sem fim" },
-            { tempo: 37, texto: "A nos embalar" },
-            { tempo: 41, texto: "" },
-            { tempo: 42, texto: "Ponte:" },
-            { tempo: 44, texto: "Duis aute irure dolor" },
-            { tempo: 48, texto: "In reprehenderit voluptate" },
-            { tempo: 52, texto: "Velit esse cillum" },
-            { tempo: 56, texto: "Dolore eu fugiat" },
-            { tempo: 60, texto: "" },
-            { tempo: 61, texto: "Refrão:" },
-            { tempo: 63, texto: "Outra música a tocar" },
-            { tempo: 67, texto: "A fazer-nos sonhar" },
-            { tempo: 71, texto: "Com melodias sem fim" },
-            { tempo: 75, texto: "A nos embalar" }
-        ]
-    }, {
-        nome: "Terceira Faixa",
-        artista: "Artista C",
-        ficheiro: "musica3.mp3",
-        capa: "https://via.placeholder.com/100/1a1a2e/4ecdc4?text=M3",
-        letra: [
-            { tempo: 0, texto: "♫ Terceira Faixa ♫" },
-            { tempo: 3, texto: "Verso 1:" },
-            { tempo: 5, texto: "Excepteur sint occaecat" },
-            { tempo: 9, texto: "Cupidatat non proident" },
-            { tempo: 13, texto: "Sunt in culpa qui officia" },
-            { tempo: 17, texto: "Deserunt mollit anim id est" },
-            { tempo: 21, texto: "" },
-            { tempo: 22, texto: "Refrão:" },
-            { tempo: 24, texto: "Terceira faixa no ar" },
-            { tempo: 28, texto: "Vamos todos cantar" },
-            { tempo: 32, texto: "Eleva a voz com emoção" },
-            { tempo: 36, texto: "A música a vibrar" },
-            { tempo: 40, texto: "" },
-            { tempo: 41, texto: "Final:" },
-            { tempo: 43, texto: "Sunt in culpa qui officia" },
-            { tempo: 47, texto: "Deserunt mollit anim id est" },
-            { tempo: 51, texto: "Laborum et dolorum" },
-            { tempo: 55, texto: "Fugiat nulla pariatur" },
-            { tempo: 59, texto: "" },
-            { tempo: 60, texto: "Refrão:" },
-            { tempo: 62, texto: "Terceira faixa no ar" },
-            { tempo: 66, texto: "Vamos todos cantar" },
-            { tempo: 70, texto: "Eleva a voz com emoção" },
-            { tempo: 74, texto: "A música a vibrar" }
-        ]
-    }];
-
+    const musicas = [];
     let indiceAtual = 0;
     let indiceLinhaAtual = -1;
 
@@ -584,20 +830,19 @@
     }
 
     function alternarPlay() {
-        if (audio.paused) {
-            audio.play();
-        } else {
-            audio.pause();
-        }
+        if (audio.paused) { audio.play(); }
+        else { audio.pause(); }
     }
 
     function musicaAnterior() {
+        if (musicas.length === 0) return;
         let novoIndex = (indiceAtual - 1 + musicas.length) % musicas.length;
         carregarMusica(novoIndex);
         audio.play();
     }
 
     function proximaMusica() {
+        if (musicas.length === 0) return;
         let novoIndex = (indiceAtual + 1) % musicas.length;
         carregarMusica(novoIndex);
         audio.play();
@@ -617,11 +862,8 @@
         }
         let html = '';
         letra.forEach(function(linha, i) {
-            if (linha.texto.trim() === '') {
-                html += '<br>';
-            } else {
-                html += '<p data-linha="' + i + '">' + linha.texto + '</p>';
-            }
+            if (linha.texto.trim() === '') { html += '<br>'; }
+            else { html += '<p data-linha="' + i + '">' + linha.texto + '</p>'; }
         });
         letraContent.innerHTML = html;
     }
@@ -632,10 +874,7 @@
         const linhas = musica.letra;
         let novaLinha = -1;
         for (let i = linhas.length - 1; i >= 0; i--) {
-            if (audio.currentTime >= linhas[i].tempo) {
-                novaLinha = i;
-                break;
-            }
+            if (audio.currentTime >= linhas[i].tempo) { novaLinha = i; break; }
         }
         if (novaLinha === indiceLinhaAtual) return;
         if (indiceLinhaAtual >= 0) {
@@ -707,19 +946,19 @@
             return;
         }
         const filtradas = musicas.filter(function(m) {
-            return m.artista.toLowerCase().includes(termo) ||
-                   m.nome.toLowerCase().includes(termo);
+            return (m.artista && m.artista.toLowerCase().includes(termo)) ||
+                   (m.nome && m.nome.toLowerCase().includes(termo));
         });
         if (filtradas.length === 0) {
             resultadosPesquisa.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:10px;text-align:center;font-size:12px;">Nenhum resultado</div>';
             return;
         }
         let html = '';
-        filtradas.forEach(function(m, idx) {
+        filtradas.forEach(function(m) {
             const realIndex = musicas.indexOf(m);
             html += '<div class="item-pesquisa" data-index="' + realIndex + '">' +
                     '<span class="nome">' + m.nome + '</span>' +
-                    '<span class="artista">' + m.artista + '</span>' +
+                    '<span class="artista">' + (m.artista || 'Desconhecido') + '</span>' +
                     '</div>';
         });
         resultadosPesquisa.innerHTML = html;
@@ -736,30 +975,39 @@
 
     pesquisaInput.addEventListener('input', atualizarPesquisa);
 
-    // --- Importar músicas do computador ---
+    // --- Importar músicas do computador (com persistência) ---
     function adicionarMusicas(ficheiros) {
         let count = 0;
+        const promises = [];
         for (let i = 0; i < ficheiros.length; i++) {
             const f = ficheiros[i];
             if (!f.type.startsWith('audio/')) continue;
             const nome = f.name.replace(/\.[^.]+$/, '');
-            const url = URL.createObjectURL(f);
-            musicas.push({
-                nome: nome,
-                artista: "Desconhecido",
-                ficheiro: url,
-                capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
-                letra: []
+            const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
+            const promise = guardarAudioNoDB(dbId, f).then(function() {
+                const url = URL.createObjectURL(f);
+                musicas.push({
+                    nome: nome,
+                    artista: "Desconhecido",
+                    ficheiro: url,
+                    capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
+                    letra: [],
+                    dbId: dbId
+                });
+                count++;
             });
-            count++;
+            promises.push(promise);
         }
-        if (count > 0) {
-            const firstNew = musicas.length - count;
-            carregarMusica(firstNew);
-            resultadosPesquisa.style.maxHeight = '250px';
-            pesquisaInput.value = '';
-            atualizarPesquisa();
-        }
+        Promise.all(promises).then(function() {
+            if (count > 0) {
+                const firstNew = musicas.length - count;
+                carregarMusica(firstNew);
+                resultadosPesquisa.style.maxHeight = '250px';
+                pesquisaInput.value = '';
+                atualizarPesquisa();
+                guardarBiblioteca();
+            }
+        });
     }
 
     document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -772,8 +1020,18 @@
         this.value = '';
     });
 
-    // --- Inicialização ---
-    carregarMusica(0);
+    // --- Inicialização do player após login ---
+    function iniciarPlayer() {
+        carregarBiblioteca().then(function(lib) {
+            if (lib.length > 0) {
+                lib.forEach(function(m) { musicas.push(m); });
+                carregarMusica(0);
+            } else {
+                tituloEl.textContent = 'Bem-vindo(a)!';
+                artistaEl.textContent = 'Adiciona músicas com os botões abaixo';
+            }
+        });
+    }
 </script>
 
 </body>
