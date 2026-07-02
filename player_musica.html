@@ -15,19 +15,34 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #1a1a2e;
-            background-image: url('file:///C:/Users/Diana/Downloads/chromecore%20y2k%20icon.jpg');
-            background-size: cover;
-            background-position: center;
-            background-blend-mode: overlay;
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 25%, #a8a8a8 50%, #d0d0d0 75%, #b0b0b0 100%);
             padding: 20px;
         }
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,210,255,0.06) 3px, rgba(0,210,255,0.06) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,110,199,0.06) 3px, rgba(255,110,199,0.06) 4px);
             z-index: 0;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(0,210,255,0.08) 25%, transparent 50%, rgba(255,110,199,0.08) 75%, transparent 100%);
+            animation: brilho 20s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes brilho {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .main-container {
