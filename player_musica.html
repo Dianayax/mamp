@@ -1355,8 +1355,8 @@
     }
 
     var capasFixas = [
-        'cover0.jpg', 'cover1.jpg', 'cover2.jpg', 'cover3.jpg',
-        'cover4.jpg', 'cover5.jpg', 'cover6.jpg', 'cover7.jpg'
+        'cover0.jpg', 'cover1.jpg',
+        'cover3.jpg', 'cover4.jpg', 'cover5.jpg', 'cover6.jpg', 'cover7.jpg'
     ];
 
     function carregarMusica(index) {
@@ -1531,8 +1531,6 @@
                 const idx = parseInt(this.getAttribute('data-index'));
                 carregarMusica(idx);
                 audio.play();
-                pesquisaInput.value = '';
-                resultadosPesquisa.innerHTML = '';
             });
         });
     }
@@ -1554,6 +1552,10 @@
                 artista = nomeCompleto.substring(0, separador).trim();
                 nome = nomeCompleto.substring(separador + 3).trim();
             }
+            const dup = musicas.some(function(m) {
+                return m.nome.toLowerCase() === nome.toLowerCase();
+            });
+            if (dup) continue;
             const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
             const promise = guardarAudioNoDB(dbId, f).then(function() {
                 const url = URL.createObjectURL(f);
@@ -1573,7 +1575,6 @@
             if (count > 0) {
                 const firstNew = musicas.length - count;
                 carregarMusica(firstNew);
-                pesquisaInput.value = '';
                 atualizarPesquisa();
                 guardarBiblioteca();
             }
@@ -1591,10 +1592,26 @@
     });
 
     // --- Inicialização do player após login ---
+    function limparDuplicados() {
+        const vistos = {};
+        const unicos = [];
+        musicas.forEach(function(m) {
+            const chave = m.nome.toLowerCase();
+            if (!vistos[chave]) {
+                vistos[chave] = true;
+                unicos.push(m);
+            }
+        });
+        musicas.length = 0;
+        unicos.forEach(function(m) { musicas.push(m); });
+        guardarBiblioteca();
+    }
+
     function iniciarPlayer() {
         carregarBiblioteca().then(function(lib) {
             if (lib.length > 0) {
                 lib.forEach(function(m) { musicas.push(m); });
+                limparDuplicados();
                 carregarMusica(0);
             } else {
                 tituloEl.textContent = 'Bem-vindo(a)!';
