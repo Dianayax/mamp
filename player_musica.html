@@ -1981,18 +1981,14 @@
     }
 
     function buscarLetraAPI(artista, nome) {
-        if (!artista || !nome) return;
+        if (!nome) return;
         letraContent.innerHTML = '<div class="sem-letra">A carregar letra...</div>';
-        const url1 = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
-        const url2 = 'https://api.textyl.co/api/lyrics?q=' + encodeURIComponent(artista + ' ' + nome);
-        fetch(url1, { mode: 'cors' }).then(function(res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            return res.json();
-        }).then(function(data) {
-            if (!data.lyrics) throw new Error('Sem letra');
-            const linhas = processarTextoLetra(data.lyrics);
-            if (linhas.length === 0) throw new Error('Vazio');
-            const musica = musicas[indiceAtual];
+        var temArtista = artista && artista !== 'Desconhecido';
+
+        function processarEmostrar(texto) {
+            var linhas = processarTextoLetra(texto);
+            if (linhas.length === 0) return false;
+            var musica = musicas[indiceAtual];
             if (musica) {
                 musica.letra = linhas;
                 mostrarLetra(linhas);
@@ -2000,21 +1996,24 @@
                     redistribuirTemposLetra(audio.duration);
                 }
             }
-        }).catch(function(err) {
-            console.warn('lyrics.ovh falhou:', err.message, '- a tentar textyl.co...');
-            fetch(url2, { mode: 'cors' }).then(function(res) {
+            return true;
+        }
+
+        function tentarTextyl(query) {
+            var url = 'https://api.textyl.co/api/lyrics?q=' + encodeURIComponent(query);
+            return fetch(url, { mode: 'cors' }).then(function(res) {
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 return res.json();
             }).then(function(data) {
                 if (!data || data.length === 0) throw new Error('Sem letra');
-                const linhas = [];
+                var linhas = [];
                 data.forEach(function(item) {
                     if (item.lyrics && item.lyrics.trim() !== '') {
                         linhas.push({ tempo: 0, texto: item.lyrics });
                     }
                 });
                 if (linhas.length === 0) throw new Error('Vazio');
-                const musica = musicas[indiceAtual];
+                var musica = musicas[indiceAtual];
                 if (musica) {
                     musica.letra = linhas;
                     mostrarLetra(linhas);
@@ -2022,16 +2021,40 @@
                         redistribuirTemposLetra(audio.duration);
                     }
                 }
-            }).catch(function(err2) {
-                console.warn('textyl.co tambem falhou:', err2.message);
-                const musica = musicas[indiceAtual];
+            });
+        }
+
+        if (temArtista) {
+            var url1 = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artista) + '/' + encodeURIComponent(nome);
+            fetch(url1, { mode: 'cors' }).then(function(res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            }).then(function(data) {
+                if (!data.lyrics) throw new Error('Sem letra');
+                if (!processarEmostrar(data.lyrics)) throw new Error('Vazio');
+            }).catch(function(err) {
+                console.warn('lyrics.ovh falhou:', err.message, '- a tentar textyl.co...');
+                tentarTextyl(artista + ' ' + nome).catch(function(err2) {
+                    console.warn('textyl.co tambem falhou:', err2.message);
+                    var musica = musicas[indiceAtual];
+                    if (musica && musica.letra && musica.letra.length > 0 && musica.letra[0].texto !== '') {
+                        mostrarLetra(musica.letra);
+                    } else {
+                        letraContent.innerHTML = '<div class="sem-letra">Letra nao encontrada</div>';
+                    }
+                });
+            });
+        } else {
+            tentarTextyl(nome).catch(function(err2) {
+                console.warn('textyl.co falhou (sem artista):', err2.message);
+                var musica = musicas[indiceAtual];
                 if (musica && musica.letra && musica.letra.length > 0 && musica.letra[0].texto !== '') {
                     mostrarLetra(musica.letra);
                 } else {
                     letraContent.innerHTML = '<div class="sem-letra">Letra nao encontrada</div>';
                 }
             });
-        });
+        }
     }
 
     function redistribuirTemposLetra(duration) {
@@ -2066,9 +2089,7 @@
             // will redistribute on loadedmetadata
         }
         if (!musica.letra || musica.letra.length === 0) {
-            if (musica.artista && musica.artista !== 'Desconhecido') {
-                buscarLetraAPI(musica.artista, musica.nome);
-            }
+            buscarLetraAPI(musica.artista, musica.nome);
         }
         // --- mini-player ---
         document.getElementById('miniCapa').src = capasFixas[index % capasFixas.length];
