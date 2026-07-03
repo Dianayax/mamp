@@ -760,6 +760,104 @@
             background: rgba(204,51,51,0.12);
             color: #cc3333;
         }
+
+        /* === CONTEXT MENU === */
+        .context-menu {
+            position: fixed;
+            min-width: 180px;
+            background: linear-gradient(145deg, rgba(30,30,40,0.97), rgba(20,20,30,0.97));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(192,192,192,0.12);
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 20px rgba(204,51,51,0.08);
+            z-index: 300;
+            display: none;
+        }
+        .context-menu.show { display: block; }
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 9px 14px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 12px;
+            color: rgba(200,200,200,0.7);
+            transition: 0.15s;
+            border: none;
+            background: none;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .context-menu-item:hover {
+            background: rgba(204,51,51,0.12);
+            color: #cc3333;
+        }
+        .context-menu-item .ctx-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.5;
+        }
+        .context-menu-item:hover .ctx-icon { opacity: 1; }
+        .context-menu-item.danger:hover {
+            background: rgba(204,51,51,0.18);
+            color: #ff4444;
+        }
+        .context-menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 4px 10px;
+        }
+        .context-menu .has-submenu {
+            position: relative;
+        }
+        .context-menu .has-submenu::after {
+            content: '▸';
+            position: absolute;
+            right: 12px;
+            color: rgba(200,200,200,0.3);
+            font-size: 10px;
+        }
+        .context-submenu {
+            position: absolute;
+            left: 100%;
+            top: -4px;
+            min-width: 160px;
+            background: linear-gradient(145deg, rgba(30,30,40,0.97), rgba(20,20,30,0.97));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(192,192,192,0.12);
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+            display: none;
+            z-index: 301;
+        }
+        .context-submenu.show { display: block; }
+        .context-submenu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            color: rgba(200,200,200,0.6);
+            transition: 0.15s;
+            border: none;
+            background: none;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .context-submenu-item:hover {
+            background: rgba(204,51,51,0.12);
+            color: #cc3333;
+        }
+
         /* === PROFILE MODAL === */
         .profile-overlay {
             position: fixed;
@@ -1374,6 +1472,15 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="context-menu" id="contextMenu">
+    <button class="context-menu-item" data-action="favorite"><span class="ctx-icon">♡</span> Favorito</button>
+    <div class="context-menu-divider"></div>
+    <button class="context-menu-item has-submenu" id="ctxAddPlaylist"><span class="ctx-icon">+</span> Add à Playlist</button>
+    <div class="context-submenu" id="ctxPlaylistSubmenu"></div>
+    <div class="context-menu-divider"></div>
+    <button class="context-menu-item danger" data-action="delete"><span class="ctx-icon">✕</span> Remover</button>
 </div>
 
 <div class="mini-player" id="miniPlayer">
@@ -2217,6 +2324,10 @@
                 carregarMusica(idx);
                 audio.play();
             });
+            el.addEventListener('contextmenu', function(e) {
+                const idx = parseInt(this.getAttribute('data-index'));
+                showContextMenu(e, idx);
+            });
         });
     }
 
@@ -2673,6 +2784,151 @@
         document.getElementById('miniPlayer').classList.remove('show');
         document.getElementById('player').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+
+    // =============================================
+    // CONTEXT MENU (right-click on search results)
+    // =============================================
+    var ctxTargetIndex = -1;
+
+    function showContextMenu(e, index) {
+        e.preventDefault();
+        ctxTargetIndex = index;
+        var menu = document.getElementById('contextMenu');
+        var submenu = document.getElementById('ctxPlaylistSubmenu');
+        submenu.classList.remove('show');
+        // Build playlist submenu
+        var names = Object.keys(playlists);
+        if (names.length === 0) {
+            submenu.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center">Sem playlists</div>';
+        } else {
+            var html = '';
+            names.forEach(function(n) {
+                var pl = playlists[n];
+                var count = pl && pl.musicas ? pl.musicas.length : 0;
+                html += '<button class="context-submenu-item" data-playlist="' + n.replace(/"/g,'&quot;') + '">' + n + ' (' + count + ')</button>';
+            });
+            submenu.innerHTML = html;
+            submenu.querySelectorAll('.context-submenu-item').forEach(function(el) {
+                el.addEventListener('click', function(ev) {
+                    ev.stopPropagation();
+                    var plName = el.getAttribute('data-playlist');
+                    var musica = musicas[ctxTargetIndex];
+                    if (!musica) return;
+                    var id = musica._id || musica.dbId || ctxTargetIndex;
+                    if (!playlists[plName]) playlists[plName] = { musicas: [], desc: '', cover: '' };
+                    if (playlists[plName].musicas.indexOf(id) >= 0) {
+                        alert('Esta música já está na playlist.');
+                    } else {
+                        playlists[plName].musicas.push(id);
+                        guardarPlaylists();
+                    }
+                    fecharContextMenu();
+                });
+            });
+        }
+        // Position menu
+        var mx = e.clientX, my = e.clientY;
+        var mw = 200, mh = 140;
+        if (mx + mw > window.innerWidth) mx = window.innerWidth - mw - 10;
+        if (my + mh > window.innerHeight) my = window.innerHeight - mh - 10;
+        if (mx < 10) mx = 10;
+        if (my < 10) my = 10;
+        menu.style.left = mx + 'px';
+        menu.style.top = my + 'px';
+        menu.classList.add('show');
+        // Update favorite button text
+        var favBtn = menu.querySelector('[data-action="favorite"]');
+        if (favBtn) {
+            if (!usuarioAtual) { favBtn.style.display = 'none'; }
+            else {
+                favBtn.style.display = 'flex';
+                var id = musicas[index]._id || musicas[index].dbId || index;
+                if (favoritos.indexOf(id) >= 0) {
+                    favBtn.innerHTML = '<span class="ctx-icon">♥</span> Remover Favoritos';
+                } else {
+                    favBtn.innerHTML = '<span class="ctx-icon">♡</span> Add Favoritos';
+                }
+            }
+        }
+    }
+
+    function fecharContextMenu() {
+        document.getElementById('contextMenu').classList.remove('show');
+        document.getElementById('ctxPlaylistSubmenu').classList.remove('show');
+        ctxTargetIndex = -1;
+    }
+
+    // Handle context menu action clicks
+    document.addEventListener('click', function(e) {
+        var menu = document.getElementById('contextMenu');
+        if (!menu.contains(e.target)) {
+            fecharContextMenu();
+        }
+    });
+
+    document.getElementById('contextMenu').addEventListener('click', function(e) {
+        var btn = e.target.closest('.context-menu-item');
+        if (!btn) return;
+        var action = btn.getAttribute('data-action');
+        if (!action) return;
+        if (action === 'favorite') {
+            if (!usuarioAtual || ctxTargetIndex < 0) return;
+            var musica = musicas[ctxTargetIndex];
+            if (!musica) return;
+            var id = musica._id || musica.dbId || ctxTargetIndex;
+            var idx = favoritos.indexOf(id);
+            if (idx >= 0) { favoritos.splice(idx, 1); }
+            else { favoritos.push(id); }
+            guardarFavoritos();
+            if (ctxTargetIndex === indiceAtual) atualizarBtnFavorito();
+            fecharContextMenu();
+        } else if (action === 'delete') {
+            if (ctxTargetIndex < 0) return;
+            if (!confirm('Remover "' + musicas[ctxTargetIndex].nome + '" da biblioteca?')) return;
+            var musica = musicas[ctxTargetIndex];
+            if (musica.dbId) removerAudioDoDB(musica.dbId);
+            musicas.splice(ctxTargetIndex, 1);
+            if (ctxTargetIndex === indiceAtual) {
+                if (musicas.length === 0) {
+                    audio.src = '';
+                    tituloEl.textContent = 'Nenhuma música';
+                    artistaEl.textContent = '---';
+                    capaEl.src = 'cover0.jpg';
+                    letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
+                    document.getElementById('miniPlayer').classList.remove('show');
+                } else {
+                    var next = Math.min(ctxTargetIndex, musicas.length - 1);
+                    carregarMusica(next);
+                    audio.play();
+                }
+            }
+            if (ctxTargetIndex < indiceAtual) indiceAtual--;
+            guardarBiblioteca();
+            fecharContextMenu();
+            atualizarPesquisa();
+        }
+    });
+
+    // "Add to Playlist" hover shows submenu
+    document.getElementById('ctxAddPlaylist').addEventListener('mouseenter', function() {
+        var sub = document.getElementById('ctxPlaylistSubmenu');
+        var menu = document.getElementById('contextMenu');
+        var rect = this.getBoundingClientRect();
+        sub.style.left = (rect.right - menu.getBoundingClientRect().left) + 'px';
+        sub.style.top = (rect.top - menu.getBoundingClientRect().top) + 'px';
+        sub.classList.add('show');
+    });
+    document.getElementById('ctxPlaylistSubmenu').addEventListener('mouseleave', function() {
+        this.classList.remove('show');
+    });
+    // Keep submenu open when hovering from parent to submenu
+    document.getElementById('ctxPlaylistSubmenu').addEventListener('mouseenter', function() {
+        this.classList.add('show');
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') fecharContextMenu();
+    });
 
     // Override entrar to load favorites and playlists
     entrar = function(email) {
