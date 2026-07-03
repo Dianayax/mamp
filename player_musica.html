@@ -2007,9 +2007,12 @@
             }).then(function(data) {
                 if (!data || data.length === 0) throw new Error('Sem letra');
                 var linhas = [];
+                var temTempos = false;
                 data.forEach(function(item) {
                     if (item.lyrics && item.lyrics.trim() !== '') {
-                        linhas.push({ tempo: 0, texto: item.lyrics });
+                        var t = (typeof item.seconds === 'number') ? item.seconds : 0;
+                        if (t > 0) temTempos = true;
+                        linhas.push({ tempo: t, texto: item.lyrics });
                     }
                 });
                 if (linhas.length === 0) throw new Error('Vazio');
@@ -2017,7 +2020,8 @@
                 if (musica) {
                     musica.letra = linhas;
                     mostrarLetra(linhas);
-                    if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+                    // redistribui apenas se a API nao devolveu timestamps
+                    if (!temTempos && audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
                         redistribuirTemposLetra(audio.duration);
                     }
                 }
