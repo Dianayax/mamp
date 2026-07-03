@@ -33,6 +33,43 @@
             width: 100%;
             justify-content: center;
         }
+        @media (min-width: 769px) {
+            .main-container {
+                height: calc(100vh - 48px);
+                overflow: hidden;
+            }
+            .ipod {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .ipod-ecra {
+                flex: 1;
+                min-height: 130px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .ipod-ecra .capa {
+                max-width: 150px;
+                height: 100px;
+            }
+            .click-wheel {
+                width: 150px;
+                height: 150px;
+                flex-shrink: 0;
+            }
+            .wheel-center {
+                width: 50px;
+                height: 50px;
+            }
+            .painel-pesquisa, .painel-playlist, .painel-letra {
+                overflow-y: auto;
+            }
+            .painel-letra .letra-content {
+                max-height: none;
+            }
+        }
 
         /* ===== PAINEL DE PESQUISA (ESQUERDA) ===== */
         .painel-pesquisa {
