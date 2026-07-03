@@ -2041,8 +2041,8 @@
             return;
         }
         const linhas = musica.letra;
-        // Skip if tempos not yet distributed (all zero)
-        if (linhas.length > 1 && linhas[1].tempo === 0) return;
+        // Skip if tempos not yet distributed
+        if (linhas.length > 0 && linhas[linhas.length - 1].tempo === 0) return;
         let novaLinha = -1;
         for (let i = linhas.length - 1; i >= 0; i--) {
             if (audio.currentTime >= linhas[i].tempo) { novaLinha = i; break; }
