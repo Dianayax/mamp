@@ -1955,6 +1955,11 @@
         atualizarPesquisa();
         indiceLinhaAtual = -1;
         atualizarMediaSession();
+        if (musica.letra && musica.letra.length > 0) {
+            if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+                redistribuirTemposLetra(audio.duration);
+            }
+        }
         if (musica.artista && musica.artista !== 'Desconhecido') {
             buscarLetraAPI(musica.artista, musica.nome);
         }
@@ -2128,7 +2133,7 @@
         tempoTotalEl.textContent = formatarTempo(audio.duration);
         const musica = musicas[indiceAtual];
         if (musica && musica.letra && musica.letra.length > 0) {
-            if (musica.letra[0].tempo === 0 && musica.letra.length > 1 && musica.letra[1].tempo === 1) {
+            if (musica.letra[0].tempo === 0 && musica.letra[musica.letra.length - 1].tempo === 0) {
                 redistribuirTemposLetra(audio.duration);
             }
         }
