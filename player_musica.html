@@ -17,7 +17,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #000 url('bg.png') no-repeat center;
+            background: #000 url('blackwallpaper.png') no-repeat center;
             background-size: cover;
             padding: 20px;
         }
@@ -254,7 +254,7 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
         .ipod-ecra {
-            background: #111 url('bg_ecra.jpg') no-repeat center;
+            background: #111 url('blackipodecra.jpg') no-repeat center;
             background-size: cover;
             border-radius: 14px;
             padding: 12px;
@@ -536,8 +536,8 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 20px;
-            width: 220px;
-            min-width: 180px;
+            width: 280px;
+            min-width: 240px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
@@ -1187,6 +1187,16 @@
         }
         .btn-favorito:hover { color: rgba(255,255,255,0.8); transform: scale(1.15); }
         .btn-favorito.ativo { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
+        .btn-preferido {
+            background: none; border: none;
+            font-size: 20px; cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            transition: 0.2s; padding: 0; line-height: 1;
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-preferido:hover { color: rgba(255,255,255,0.8); transform: scale(1.15); }
+        .btn-preferido.ativo { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
         .ipod-controls-row {
             display: flex; align-items: center; justify-content: center;
             gap: 6px; margin-top: 6px;
@@ -1378,6 +1388,88 @@
                 max-width: 340px;
             }
         }
+        [data-theme="castanho"] .ipod-ecra .titulo { color: #5a3020; text-shadow: 0 0 10px rgba(90,48,32,0.4); }
+        [data-theme="castanho"] .ipod-ecra .artista { color: #7a4a30; }
+        [data-theme="castanho"] .ipod-ecra .barra-progresso { background: rgba(90,48,32,0.25); }
+        [data-theme="castanho"] .ipod-ecra .barra-progresso::-webkit-slider-thumb { background: #5a3020; box-shadow: 0 0 10px rgba(90,48,32,0.5); }
+        [data-theme="castanho"] .ipod-ecra .tempos { color: rgba(90,48,32,0.6); }
+        [data-theme="castanho"] .ipod-ecra .letra-ecra { text-shadow: 0 0 8px rgba(90,48,32,0.4); }
+        [data-theme="castanho"] .wheel-btn:hover { color: #7a4a30; }
+        [data-theme="castanho"] .btn-favorito.ativo,
+        [data-theme="castanho"] .btn-preferido.ativo { color: #7a4a30; text-shadow: 0 0 12px rgba(90,48,32,0.5); }
+        [data-theme="castanho"] .shuffle-indicator.ativo { color: #7a4a30; text-shadow: 0 0 12px rgba(90,48,32,0.5); }
+        [data-theme="castanho"] .repeat-indicator.repeat-all,
+        [data-theme="castanho"] .repeat-indicator.repeat-one { color: #7a4a30; text-shadow: 0 0 12px rgba(90,48,32,0.5); }
+        [data-theme="castanho"] .item-pesquisa .artista { color: #7a4a30; }
+        [data-theme="castanho"] .item-pesquisa:hover { border-color: rgba(90,48,32,0.3); }
+        [data-theme="castanho"] .context-menu-item:hover { background: rgba(90,48,32,0.12); color: #7a4a30; }
+        [data-theme="castanho"] .profile-dropdown-item:hover { background: rgba(90,48,32,0.12); color: #7a4a30; }
+        [data-theme="castanho"] .add-menu-item:hover { background: rgba(90,48,32,0.12); color: #7a4a30; }
+        [data-theme="castanho"] .btn-sair:hover { border-color: #7a4a30; color: #7a4a30; }
+        [data-theme="castanho"] .painel-pesquisa input[type="text"]:focus,
+        [data-theme="castanho"] .painel-playlist input[type="text"]:focus { border-color: #7a4a30; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(90,48,32,0.3); }
+        [data-theme="castanho"] .user-bar { background: rgba(40,25,15,0.7); }
+        [data-theme="castanho"] .mini-player { background: rgba(40,25,15,0.9); }
+        [data-theme="castanho"] .mini-artista { color: #7a4a30; }
+        [data-theme="castanho"] .mini-btn:hover { color: #7a4a30; background: rgba(90,48,32,0.1); }
+        [data-theme="castanho"] .mini-btn.mini-play { background: rgba(90,48,32,0.25); }
+        [data-theme="castanho"] .mini-btn.mini-play:hover { background: rgba(90,48,32,0.4); }
+        [data-theme="branco-azul"] .ipod-ecra .titulo { color: #1a8a8a; text-shadow: 0 0 10px rgba(26,138,138,0.4); }
+        [data-theme="branco-azul"] .ipod-ecra .artista { color: #2ab0b0; }
+        [data-theme="branco-azul"] .ipod-ecra .barra-progresso { background: rgba(26,138,138,0.25); }
+        [data-theme="branco-azul"] .ipod-ecra .barra-progresso::-webkit-slider-thumb { background: #1a8a8a; box-shadow: 0 0 10px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .ipod-ecra .tempos { color: rgba(26,138,138,0.6); }
+        [data-theme="branco-azul"] .ipod-ecra .letra-ecra { text-shadow: 0 0 8px rgba(26,138,138,0.4); }
+        [data-theme="branco-azul"] .wheel-btn:hover { color: #2ab0b0; }
+        [data-theme="branco-azul"] .btn-favorito.ativo,
+        [data-theme="branco-azul"] .btn-preferido.ativo { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .shuffle-indicator.ativo { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .repeat-indicator.repeat-all,
+        [data-theme="branco-azul"] .repeat-indicator.repeat-one { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .item-pesquisa .artista { color: #2ab0b0; }
+        [data-theme="branco-azul"] .item-pesquisa:hover { border-color: rgba(26,138,138,0.3); }
+        [data-theme="branco-azul"] .context-menu-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
+        [data-theme="branco-azul"] .profile-dropdown-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
+        [data-theme="branco-azul"] .add-menu-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
+        [data-theme="branco-azul"] .btn-sair:hover { border-color: #2ab0b0; color: #2ab0b0; }
+        [data-theme="branco-azul"] .painel-pesquisa input[type="text"]:focus,
+        [data-theme="branco-azul"] .painel-playlist input[type="text"]:focus { border-color: #2ab0b0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(26,138,138,0.3); }
+        [data-theme="branco-azul"] .user-bar { background: rgba(180,220,235,0.25); backdrop-filter: blur(10px); }
+        [data-theme="branco-azul"] .mini-player { background: rgba(180,220,235,0.2); backdrop-filter: blur(20px); }
+        [data-theme="branco-azul"] .mini-artista { color: #2ab0b0; }
+        [data-theme="branco-azul"] .mini-btn:hover { color: #2ab0b0; background: rgba(26,138,138,0.1); }
+        [data-theme="branco-azul"] .mini-btn.mini-play { background: rgba(26,138,138,0.2); }
+        [data-theme="branco-azul"] .mini-btn.mini-play:hover { background: rgba(26,138,138,0.35); }
+        [data-theme="default"] .ipod-ecra .titulo { color: #b8942e; text-shadow: 0 0 10px rgba(184,148,46,0.4); }
+        [data-theme="default"] .ipod-ecra .artista { color: #d4b84a; }
+        [data-theme="default"] .ipod-ecra .barra-progresso { background: rgba(184,148,46,0.25); }
+        [data-theme="default"] .ipod-ecra .barra-progresso::-webkit-slider-thumb { background: #b8942e; box-shadow: 0 0 10px rgba(184,148,46,0.5); }
+        [data-theme="default"] .ipod-ecra .tempos { color: rgba(184,148,46,0.6); }
+        [data-theme="default"] .ipod-ecra .letra-ecra { text-shadow: 0 0 8px rgba(184,148,46,0.4); }
+        [data-theme="default"] .wheel-btn:hover { color: #d4b84a; }
+        [data-theme="default"] .btn-favorito.ativo,
+        [data-theme="default"] .btn-preferido.ativo { color: #d4b84a; text-shadow: 0 0 12px rgba(184,148,46,0.5); }
+        [data-theme="default"] .shuffle-indicator.ativo { color: #d4b84a; text-shadow: 0 0 12px rgba(184,148,46,0.5); }
+        [data-theme="default"] .repeat-indicator.repeat-all,
+        [data-theme="default"] .repeat-indicator.repeat-one { color: #d4b84a; text-shadow: 0 0 12px rgba(184,148,46,0.5); }
+        [data-theme="default"] .item-pesquisa .artista { color: #d4b84a; }
+        [data-theme="default"] .item-pesquisa:hover { border-color: rgba(184,148,46,0.3); }
+        [data-theme="default"] .context-menu-item:hover { background: rgba(184,148,46,0.12); color: #d4b84a; }
+        [data-theme="default"] .profile-dropdown-item:hover { background: rgba(184,148,46,0.12); color: #d4b84a; }
+        [data-theme="default"] .add-menu-item:hover { background: rgba(184,148,46,0.12); color: #d4b84a; }
+        [data-theme="default"] .btn-sair:hover { border-color: #d4b84a; color: #d4b84a; }
+        [data-theme="default"] .painel-pesquisa input[type="text"]:focus,
+        [data-theme="default"] .painel-playlist input[type="text"]:focus { border-color: #d4b84a; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(184,148,46,0.3); }
+        [data-theme="default"] .user-bar { background: rgba(40,45,30,0.7); }
+        [data-theme="default"] .mini-player { background: rgba(40,45,30,0.9); }
+        [data-theme="default"] .mini-artista { color: #d4b84a; }
+        [data-theme="default"] .mini-btn:hover { color: #d4b84a; background: rgba(184,148,46,0.1); }
+        [data-theme="default"] .mini-btn.mini-play { background: rgba(184,148,46,0.2); }
+        [data-theme="default"] .mini-btn.mini-play:hover { background: rgba(184,148,46,0.4); }
+        [data-theme="preto"] .ipod-ecra .barra-progresso { background: rgba(204,51,51,0.25); }
+        [data-theme="preto"] .ipod-ecra .tempos { color: rgba(204,51,51,0.6); }
+        [data-theme="preto"] .user-bar { background: rgba(0,0,0,0.7); }
+        [data-theme="preto"] .mini-player { background: rgba(0,0,0,0.9); }
     </style>
 </head>
 <body>
@@ -1406,6 +1498,8 @@
             <div class="profile-dropdown" id="profileDropdown" onclick="event.stopPropagation()">
                 <button class="profile-dropdown-item" onclick="abrirProfile()">Perfil</button>
                 <button class="profile-dropdown-item" onclick="abrirSettings()">Settings</button>
+                <button class="profile-dropdown-item" onclick="abrirTheme()">Theme</button>
+                <button class="profile-dropdown-item" onclick="addFriend()">Add Friend</button>
                 <button class="profile-dropdown-item" onclick="logout()">Quit</button>
             </div>
         </div>
@@ -1442,6 +1536,16 @@
             </div>
 
             <div style="text-align:left;margin-bottom:15px">
+                <div style="color:#b0b0b0;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-family:'Consolas','Courier New',monospace">Theme</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <button class="theme-btn" onclick="setTheme('preto')" style="padding:8px 12px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:url('Blacktheme/blackipodecra.jpg') center/cover;color:#eee;font-size:11px;cursor:pointer;text-shadow:0 1px 4px #000;display:flex;align-items:center;justify-content:center;text-align:center">Preto</button>
+                    <button class="theme-btn" onclick="setTheme('castanho')" style="padding:8px 12px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:url('browntheme/brownpipodscreen.jpg') center/cover;color:#3a2010;font-size:11px;font-weight:bold;cursor:pointer;text-shadow:0 1px 3px rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;text-align:center">Castanho</button>
+                    <button class="theme-btn" onclick="setTheme('branco-azul')" style="padding:8px 12px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:url('whiteturqoisetheme/turquoiseipodscreen.jpg') center/cover;color:#113;font-size:11px;cursor:pointer;text-shadow:0 1px 4px rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;text-align:center">Branco &amp; Azul</button>
+                    <button class="theme-btn" onclick="setTheme('default')" style="padding:8px 12px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:#272519;color:#ccc;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center">Default</button>
+                </div>
+            </div>
+
+            <div style="text-align:left;margin-bottom:15px">
                 <div style="color:#b0b0b0;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-family:'Consolas','Courier New',monospace">Keyboard Shortcuts</div>
                 <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;color:rgba(255,255,255,0.6)">
                     <span style="color:#aaa;background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:4px;text-align:center">Space</span><span>Play / Pause</span>
@@ -1455,6 +1559,20 @@
             </div>
 
             <button class="btn-save" onclick="document.getElementById('settingsOverlay').classList.remove('show')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- THEME MODAL -->
+    <div class="profile-overlay" id="themeOverlay">
+        <div class="profile-modal" style="width:340px">
+            <h2>Theme</h2>
+            <div style="display:flex;gap:10px;justify-content:center;margin:20px 0;flex-wrap:wrap">
+                <button class="theme-btn" onclick="setTheme('preto')" style="padding:16px 18px;border-radius:16px;border:2px solid rgba(255,255,255,0.15);background:url('Blacktheme/blackipodecra.jpg') center/cover;color:#eee;font-size:13px;cursor:pointer;flex:1;min-width:80px;text-shadow:0 1px 4px #000;display:flex;align-items:center;justify-content:center;text-align:center">Preto</button>
+                <button class="theme-btn" onclick="setTheme('castanho')" style="padding:16px 18px;border-radius:16px;border:2px solid rgba(255,255,255,0.15);background:url('browntheme/brownpipodscreen.jpg') center/cover;color:#3a2010;font-size:13px;font-weight:bold;cursor:pointer;flex:1;min-width:80px;text-shadow:0 1px 3px rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;text-align:center">Castanho</button>
+                <button class="theme-btn" onclick="setTheme('branco-azul')" style="padding:16px 18px;border-radius:16px;border:2px solid rgba(255,255,255,0.15);background:url('whiteturqoisetheme/turquoiseipodscreen.jpg') center/cover;color:#113;font-size:13px;cursor:pointer;flex:1;min-width:80px;text-shadow:0 1px 4px rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;text-align:center">Branco &amp; Azul</button>
+                <button class="theme-btn" onclick="setTheme('default')" style="padding:16px 18px;border-radius:16px;border:2px solid rgba(255,255,255,0.15);background:#272519;color:#ccc;font-size:13px;cursor:pointer;flex:1;min-width:80px;display:flex;align-items:center;justify-content:center;text-align:center">Default</button>
+            </div>
+            <button class="btn-close" onclick="document.getElementById('themeOverlay').classList.remove('show')">Cancelar</button>
         </div>
     </div>
 
@@ -1540,9 +1658,10 @@
             <div class="titulo" id="titulo">Nenhuma música</div>
             <div class="artista" id="artista">---</div>
             <div class="ipod-controls-row">
-                <button class="btn-favorito" id="btnFavorito" onclick="alternarFavorito()" title="Favorito">♡</button>
                 <span class="shuffle-indicator" id="btnShuffle" onclick="toggleShuffle()" title="Shuffle">🔀</span>
                 <span class="repeat-indicator" id="btnRepeat" onclick="cycleRepeat()" title="Repetir">⟳</span>
+                <button class="btn-favorito" id="btnFavorito" onclick="alternarFavorito()" title="Favorito">♡</button>
+                <button class="btn-preferido" id="btnPreferido" onclick="alternarPreferido()" title="Preferido">☆</button>
             </div>
             <input class="barra-progresso" type="range" id="progresso" value="0" min="0" max="100" step="0.1">
             <div class="tempos">
@@ -1821,7 +1940,7 @@
         audio.src = '';
         tituloEl.textContent = 'Nenhuma música';
         artistaEl.textContent = '---';
-        capaEl.src = 'cover0.jpg';
+        capaEl.src = getThemeCover();
         letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
         resultadosPesquisa.innerHTML = '';
         indiceAtual = 0;
@@ -1833,6 +1952,8 @@
         document.getElementById('btnRepeat').textContent = '⟳';
         document.getElementById('btnFavorito').className = 'btn-favorito';
         document.getElementById('btnFavorito').textContent = '♡';
+        document.getElementById('btnPreferido').className = 'btn-preferido';
+        document.getElementById('btnPreferido').textContent = '☆';
     }
 
     // --- Profile ---
@@ -1898,6 +2019,62 @@
     function abrirSettings() {
         fecharProfileDropdown();
         document.getElementById('settingsOverlay').classList.add('show');
+    }
+    function abrirTheme() {
+        fecharProfileDropdown();
+        document.getElementById('themeOverlay').classList.add('show');
+    }
+    function addFriend() {
+        fecharProfileDropdown();
+        alert('Feature coming soon!');
+    }
+    var themeData = {
+        default: { wallpaper: '#4b4e34', ipodBg: '#272519', cover: 'defaultcapa.jpg' },
+        preto: { wallpaper: 'Blacktheme/blackwallpaper.png', ipodBg: 'Blacktheme/blackipodecra.jpg', cover: 'Blacktheme/bobesponja.jpg' },
+        castanho: { wallpaper: 'browntheme/browntheme.png', ipodBg: 'browntheme/brownpipodscreen.jpg', cover: 'browntheme/bobesponja - Cópia.jpg' },
+        'branco-azul': { wallpaper: 'whiteturqoisetheme/whiteturqoisewallpaper.png', ipodBg: 'whiteturqoisetheme/turquoiseipodscreen.jpg', cover: 'whiteturqoisetheme/bobesponja - Cópia - Cópia.jpg' }
+    };
+    function getThemeCover() {
+        var t = localStorage.getItem('chromecore_theme') || 'default';
+        var d = themeData[t];
+        if (d && d.cover) return d.cover;
+        return capasFixas[(indiceAtual || 0) % capasFixas.length];
+    }
+    function aplicarTheme(t) {
+        var d = themeData[t] || themeData.default;
+        document.body.dataset.theme = t || 'default';
+        if (d.wallpaper && d.wallpaper.charAt(0) === '#') {
+            document.body.style.background = d.wallpaper;
+            document.body.style.backgroundSize = '';
+            document.body.style.backgroundPosition = '';
+        } else if (d.wallpaper) {
+            document.body.style.background = 'url(\'' + d.wallpaper + '\') no-repeat center';
+            document.body.style.backgroundSize = 'cover';
+        } else {
+            document.body.style.background = '';
+        }
+        var ecra = document.getElementById('player').querySelector('.ipod-ecra');
+        if (d.ipodBg && d.ipodBg.charAt(0) === '#') {
+            ecra.style.background = d.ipodBg;
+        } else if (d.ipodBg) {
+            ecra.style.background = 'url(\'' + d.ipodBg + '\') no-repeat center';
+            ecra.style.backgroundSize = 'cover';
+        } else {
+            ecra.style.background = '';
+        }
+        if (d.cover) {
+            capaEl.src = d.cover;
+            document.getElementById('miniCapa').src = d.cover;
+        } else if (musicas.length > 0 && musicas[indiceAtual]) {
+            capaEl.src = capasFixas[indiceAtual % capasFixas.length];
+            document.getElementById('miniCapa').src = capasFixas[indiceAtual % capasFixas.length];
+        }
+    }
+    function setTheme(t) {
+        document.getElementById('themeOverlay').classList.remove('show');
+        document.getElementById('settingsOverlay').classList.remove('show');
+        localStorage.setItem('chromecore_theme', t);
+        aplicarTheme(t);
     }
 
     function fecharProfile() {
@@ -2123,6 +2300,7 @@
     let shuffleOn = false;
     let repeatMode = 0; // 0=off, 1=all, 2=one
     let favoritos = [];
+    let preferidos = [];
     let playlists = {};
     let playlistAtiva = null;
     let audioContext = null;
@@ -2136,12 +2314,12 @@
         if ('mediaSession' in navigator) {
             const musica = musicas[indiceAtual];
             if (!musica) return;
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: musica.nome,
-                artist: musica.artista || 'Desconhecido',
-                album: 'YourOWNspace',
-                artwork: [{ src: capasFixas[indiceAtual % capasFixas.length], sizes: '256x256', type: 'image/jpeg' }]
-            });
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: musica.nome,
+            artist: musica.artista || 'Desconhecido',
+            album: 'YourOWNspace',
+            artwork: [{ src: getThemeCover(), sizes: '256x256', type: 'image/jpeg' }]
+        });
         }
     }
 
@@ -2274,8 +2452,8 @@
         audio.src = musica.ficheiro;
         tituloEl.textContent = musica.nome;
         artistaEl.textContent = musica.artista;
-        capaEl.src = capasFixas[index % capasFixas.length];
         indiceAtual = index;
+        capaEl.src = getThemeCover();
         tempoTotalEl.textContent = '0:00';
         mostrarLetra(musica.letra);
         atualizarPesquisa();
@@ -2288,12 +2466,13 @@
             buscarLetraAPI(musica.artista, musica.nome);
         }
         // --- mini-player ---
-        document.getElementById('miniCapa').src = capasFixas[index % capasFixas.length];
+        document.getElementById('miniCapa').src = getThemeCover();
         document.getElementById('miniTitulo').textContent = musica.nome;
         document.getElementById('miniArtista').textContent = musica.artista;
         document.getElementById('miniPlayer').classList.add('show');
         // --- favoritos ---
         atualizarBtnFavorito();
+        atualizarBtnPreferido();
     }
 
     function alternarPlay() {
@@ -2803,11 +2982,14 @@
         if (!usuarioAtual) return;
         try { favoritos = JSON.parse(localStorage.getItem(getFavKey()) || '[]'); }
         catch(e) { favoritos = []; }
+        try { preferidos = JSON.parse(localStorage.getItem(getFavKey() + '_pref') || '[]'); }
+        catch(e) { preferidos = []; }
     }
 
     function guardarFavoritos() {
         if (!usuarioAtual) return;
         localStorage.setItem(getFavKey(), JSON.stringify(favoritos));
+        localStorage.setItem(getFavKey() + '_pref', JSON.stringify(preferidos));
     }
 
     function alternarFavorito() {
@@ -2832,6 +3014,31 @@
             btn.classList.add('ativo'); btn.textContent = '♥';
         } else {
             btn.classList.remove('ativo'); btn.textContent = '♡';
+        }
+    }
+
+    function alternarPreferido() {
+        if (!usuarioAtual || musicas.length === 0) return;
+        var musica = musicas[indiceAtual];
+        var id = musica._id || musica.dbId || indiceAtual;
+        var idx = preferidos.indexOf(id);
+        if (idx >= 0) { preferidos.splice(idx, 1); }
+        else { preferidos.push(id); }
+        guardarFavoritos();
+        atualizarBtnPreferido();
+    }
+
+    function atualizarBtnPreferido() {
+        var btn = document.getElementById('btnPreferido');
+        if (!usuarioAtual || musicas.length === 0 || !musicas[indiceAtual]) {
+            btn.classList.remove('ativo'); btn.textContent = '☆';
+            return;
+        }
+        var id = musicas[indiceAtual]._id || musicas[indiceAtual].dbId || indiceAtual;
+        if (preferidos.indexOf(id) >= 0) {
+            btn.classList.add('ativo'); btn.textContent = '★';
+        } else {
+            btn.classList.remove('ativo'); btn.textContent = '☆';
         }
     }
 
@@ -3185,7 +3392,7 @@
             if (idx >= 0) { favoritos.splice(idx, 1); }
             else { favoritos.push(id); }
             guardarFavoritos();
-            if (ctxTargetIndex === indiceAtual) atualizarBtnFavorito();
+            if (ctxTargetIndex === indiceAtual) { atualizarBtnFavorito(); atualizarBtnPreferido(); }
             fecharContextMenu();
         } else if (action === 'delete') {
             if (ctxTargetIndex < 0) return;
@@ -3198,7 +3405,7 @@
                     audio.src = '';
                     tituloEl.textContent = 'Nenhuma música';
                     artistaEl.textContent = '---';
-                    capaEl.src = 'cover0.jpg';
+                    capaEl.src = getThemeCover();
                     letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
                     document.getElementById('miniPlayer').classList.remove('show');
                 } else {
@@ -3264,12 +3471,15 @@
         document.getElementById('loginOverlay').style.display = 'flex';
     })();
 
-    // Placeholder typing animation
+    // Apply saved theme on load
     (function() {
-        var input = document.getElementById('pesquisaInput');
-        var text = 'O que queres reproduzir?';
-        var idx = 0;
-        var dir = 1;
+        var t = localStorage.getItem('chromecore_theme') || 'default';
+        aplicarTheme(t);
+    })();
+
+    // Placeholder typing animation
+    function iniciarPlaceholderAnim(input, text) {
+        var idx = 0, dir = 1;
         function tick() {
             input.setAttribute('placeholder', text.substring(0, idx) + (idx < text.length ? '|' : ''));
             idx += dir;
@@ -3278,6 +3488,12 @@
             setTimeout(tick, 60);
         }
         tick();
+    }
+    (function() {
+        iniciarPlaceholderAnim(document.getElementById('pesquisaInput'), 'O que queres reproduzir?');
+    })();
+    (function() {
+        iniciarPlaceholderAnim(document.getElementById('pesquisaPlaylist'), 'Pesquisar playlist...');
     })();
 </script>
 
