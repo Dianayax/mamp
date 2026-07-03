@@ -424,6 +424,71 @@
             text-align: center;
             font-family: 'Consolas', 'Courier New', monospace;
         }
+        .painel-letra .letra-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn-editar-letra {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.3);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 10px;
+            transition: 0.2s;
+            line-height: 1;
+        }
+        .btn-editar-letra:hover {
+            color: #cc3333;
+            border-color: #cc3333;
+        }
+        .letra-edit-area {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.3);
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            outline: none;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        .letra-edit-area:focus {
+            border-color: #cc3333;
+        }
+        .letra-edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            justify-content: center;
+        }
+        .letra-edit-actions button {
+            padding: 6px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Consolas', 'Courier New', monospace;
+            transition: 0.2s;
+        }
+        .letra-edit-actions .btn-save-letra {
+            background: linear-gradient(135deg, #cc3333, #aa2222);
+            color: white;
+        }
+        .letra-edit-actions .btn-save-letra:hover { transform: scale(1.05); }
+        .letra-edit-actions .btn-cancel-letra {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .letra-edit-actions .btn-cancel-letra:hover { color: white; }
         .painel-letra .letra-content {
             max-height: 400px;
             overflow-y: auto;
@@ -1294,9 +1359,19 @@
 
     <!-- PAINEL DIREITO: LETRA -->
     <div class="painel-letra">
-        <h2>Lyrics</h2>
+        <div class="letra-header">
+            <h2>Lyrics</h2>
+            <button class="btn-editar-letra" id="btnEditarLetra" onclick="toggleEditarLetra()" title="Editar letra">✎</button>
+        </div>
         <div class="letra-content" id="letraContent">
             <div class="sem-letra">Seleciona uma música<br>para ver a letra</div>
+        </div>
+        <div id="letraEditArea" style="display:none">
+            <textarea class="letra-edit-area" id="letraEditTextarea" placeholder="Cola ou escreve a letra aqui...&#10;Cada linha é uma frase."></textarea>
+            <div class="letra-edit-actions">
+                <button class="btn-save-letra" onclick="guardarLetraEditada()">Guardar</button>
+                <button class="btn-cancel-letra" onclick="cancelarEditarLetra()">Cancelar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1787,11 +1862,12 @@
     }
 
     function processarTextoLetra(texto) {
+        if (!texto || texto.trim() === '') return [];
         const textos = texto.split('\n');
         const linhas = [];
         textos.forEach(function(t) {
             if (t.trim() !== '') {
-                linhas.push({ tempo: 0, texto: t });
+                linhas.push({ tempo: 0, texto: t.trim() });
             }
         });
         return linhas;
@@ -1940,8 +2016,9 @@
     }
 
     function mostrarLetra(letra) {
+        cancelarEditarLetra();
         if (!letra || letra.length === 0) {
-            letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível</div>';
+            letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível<br><span style="font-size:11px;color:rgba(255,255,255,0.2)">Clica em ✎ para adicionar</span></div>';
             return;
         }
         let html = '';
@@ -1979,6 +2056,48 @@
         } else {
             letraEcra.textContent = '';
         }
+    }
+
+    // --- Manual lyrics edit ---
+    function toggleEditarLetra() {
+        var musica = musicas[indiceAtual];
+        if (!musica) return;
+        var editArea = document.getElementById('letraEditArea');
+        var content = document.getElementById('letraContent');
+        var textarea = document.getElementById('letraEditTextarea');
+        if (editArea.style.display === 'block') {
+            editArea.style.display = 'none';
+            content.style.display = 'block';
+            return;
+        }
+        var texto = '';
+        if (musica.letra && musica.letra.length > 0) {
+            texto = musica.letra.map(function(l) { return l.texto; }).join('\n');
+        }
+        textarea.value = texto;
+        editArea.style.display = 'block';
+        content.style.display = 'none';
+        textarea.focus();
+    }
+
+    function guardarLetraEditada() {
+        var musica = musicas[indiceAtual];
+        if (!musica) return;
+        var texto = document.getElementById('letraEditTextarea').value;
+        musica.letra = processarTextoLetra(texto);
+        if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+            redistribuirTemposLetra(audio.duration);
+        }
+        cancelarEditarLetra();
+        mostrarLetra(musica.letra);
+        if (texto.trim() && (!musica.artista || musica.artista === 'Desconhecido')) {
+            letraEcra.textContent = 'Letra adicionada manualmente';
+        }
+    }
+
+    function cancelarEditarLetra() {
+        document.getElementById('letraEditArea').style.display = 'none';
+        document.getElementById('letraContent').style.display = 'block';
     }
 
     // --- Eventos do áudio ---
@@ -2100,7 +2219,8 @@
                 const nomeCompleto = f.name.replace(/\.[^.]+$/, '');
                 let nome = nomeCompleto;
                 let artista = 'Desconhecido';
-                function finalizar(n, a) {
+                let letraTags = [];
+                function finalizar(n, a, l) {
                     const dup = musicas.some(function(m) {
                         return m.nome.toLowerCase() === n.toLowerCase();
                     });
@@ -2114,7 +2234,7 @@
                             artista: a,
                             ficheiro: url,
                             capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
-                            letra: [],
+                            letra: l || [],
                             dbId: dbId
                         });
                         count++;
@@ -2125,12 +2245,18 @@
                     jsmediatags.read(f, {
                         onSuccess: function(tag) {
                             const t = tag.tags;
+                            var lyricsText = t.lyrics || t.USLT || '';
+                            if (lyricsText && typeof lyricsText === 'object' && lyricsText.lyrics) {
+                                lyricsText = lyricsText.lyrics;
+                            }
+                            letraTags = processarTextoLetra(lyricsText);
                             finalizar(
                                 (t.title || '').trim() || nome,
-                                (t.artist || '').trim() || artista
+                                (t.artist || '').trim() || artista,
+                                letraTags
                             );
                         },
-                        onError: function() { finalizar(nome, artista); }
+                        onError: function() { finalizar(nome, artista, []); }
                     });
                 } else {
                     const separador = nomeCompleto.indexOf(' - ');
@@ -2138,7 +2264,7 @@
                         artista = nomeCompleto.substring(0, separador).trim();
                         nome = nomeCompleto.substring(separador + 3).trim();
                     }
-                    finalizar(nome, artista);
+                    finalizar(nome, artista, []);
                 }
             });
             promises.push(promise);
@@ -2363,6 +2489,50 @@
                 ctx.fillStyle = 'rgba(170,34,34,' + (0.4 + (dataArray[i] / 255) * 0.6) + ')';
                 ctx.fillRect(x, canvas.height - barHeight, Math.max(1, barWidth - 1), barHeight);
                 x += barWidth + 0.5;
+            }
+        }
+        draw();
+    }
+
+    // =============================================
+    // EQUALIZER (Settings)
+    // =============================================
+    var eqAnimId = null;
+    var eqOn = false;
+
+    function toggleEq() {
+        eqOn = !eqOn;
+        if (eqOn) {
+            desenharEq();
+        } else {
+            if (eqAnimId) { cancelAnimationFrame(eqAnimId); eqAnimId = null; }
+            var canvas = document.getElementById('eqCanvas');
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    function desenharEq() {
+        var canvas = document.getElementById('eqCanvas');
+        var ctx = canvas.getContext('2d');
+        var w = canvas.width, h = canvas.height;
+        var bars = 20;
+        var barW = (w / bars) * 0.6;
+        var gap = (w / bars) * 0.4;
+
+        function draw() {
+            eqAnimId = requestAnimationFrame(draw);
+            ctx.clearRect(0, 0, w, h);
+            for (var i = 0; i < bars; i++) {
+                var val = Math.sin(Date.now() / 300 + i * 0.5) * 0.4 + 0.5;
+                val += Math.sin(Date.now() / 150 + i * 1.2) * 0.2;
+                var barH = Math.max(4, val * h * 0.8);
+                var x = i * (barW + gap) + gap / 2;
+                var grad = ctx.createLinearGradient(0, h, 0, h - barH);
+                grad.addColorStop(0, 'rgba(170,34,34,0.3)');
+                grad.addColorStop(1, 'rgba(204,51,51,0.8)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(x, h - barH, barW, barH);
             }
         }
         draw();
