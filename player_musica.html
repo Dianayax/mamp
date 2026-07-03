@@ -45,8 +45,6 @@
             min-width: 240px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
         }
         .painel-pesquisa h2 {
             font-size: 15px;
@@ -150,7 +148,8 @@
             opacity: 0.5;
         }
         .add-menu-item:hover .menu-icon { opacity: 1; }
-        .painel-pesquisa input[type="text"] {
+        .painel-pesquisa input[type="text"],
+        .painel-playlist input[type="text"] {
             width: 100%;
             padding: 12px 40px 12px 32px;
             border-radius: 25px;
@@ -163,13 +162,16 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.05);
             text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
-        .painel-pesquisa input[type="text"]:focus {
+        .painel-pesquisa input[type="text"]:focus,
+        .painel-playlist input[type="text"]:focus {
             border-color: #cc3333;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(204,51,51,0.3);
         }
-        .painel-pesquisa input[type="text"]::placeholder {
+        .painel-pesquisa input[type="text"]::placeholder,
+        .painel-playlist input[type="text"]::placeholder {
             color: rgba(200,200,200,0.4);
         }
+
         .painel-pesquisa input[type="text"].modo-plus {
             background: linear-gradient(145deg, rgba(204,51,51,0.15), rgba(150,30,30,0.08));
             border-color: #cc3333;
@@ -539,19 +541,11 @@
             min-width: 180px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
         }
         .painel-playlist .playlist-section {
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .painel-playlist .playlist-section .playlist-songs {
-            flex: 1;
-            min-height: 0;
-            max-height: none;
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
         }
         .painel-playlist h2 {
             font-size: 15px;
@@ -1498,7 +1492,7 @@
         <h2>Songs</h2>
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
+            <input type="text" id="pesquisaInput" placeholder="Qual musica pretendes reproduzir?">
             <button class="search-add-btn" id="searchAddBtn" onclick="toggleAddMenu()">+</button>
             <div class="add-menu" id="addMenu">
                 <button class="add-menu-item" onclick="addSongClick()"><span class="menu-icon">🎵</span> Add Song</button>
@@ -1514,11 +1508,12 @@
     <!-- PAINEL PLAYLIST -->
     <div class="painel-playlist">
         <h2>Playlist</h2>
+        <div class="search-wrapper" style="margin-bottom:10px">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="pesquisaPlaylist" placeholder="Pesquisar playlist...">
+            <button class="playlist-add-btn" onclick="abrirCriarPlaylist()" title="Criar Playlist" style="position:absolute;right:5px;top:50%;transform:translateY(-50%);z-index:5">+</button>
+        </div>
         <div class="playlist-section">
-            <div class="playlist-header">
-                <h3>Playlists</h3>
-                <button class="playlist-add-btn" onclick="abrirCriarPlaylist()" title="Criar Playlist">+</button>
-            </div>
             <div id="playlistList"></div>
             <div class="playlist-songs" id="playlistSongs"></div>
         </div>
@@ -2960,9 +2955,11 @@
 
     function renderPlaylists() {
         var el = document.getElementById('playlistList');
+        var termo = (document.getElementById('pesquisaPlaylist').value || '').toLowerCase().trim();
         var nomes = Object.keys(playlists);
+        if (termo) nomes = nomes.filter(function(n) { return n.toLowerCase().includes(termo); });
         if (nomes.length === 0) {
-            el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:11px;text-align:center;padding:8px;">Sem playlists</div>';
+            el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:11px;text-align:center;padding:8px;">' + (termo ? 'Nenhuma playlist' : 'Sem playlists') + '</div>';
             return;
         }
         var html = '';
@@ -2979,6 +2976,10 @@
         });
         el.innerHTML = html;
     }
+
+    document.getElementById('pesquisaPlaylist').addEventListener('input', function() {
+        renderPlaylists();
+    });
 
 
 
@@ -3166,6 +3167,22 @@
             }
         }
         document.getElementById('loginOverlay').style.display = 'flex';
+    })();
+
+    // Placeholder typing animation
+    (function() {
+        var input = document.getElementById('pesquisaInput');
+        var text = 'Qual musica pretendes reproduzir?';
+        var idx = 0;
+        var dir = 1;
+        function tick() {
+            input.setAttribute('placeholder', text.substring(0, idx) + (idx < text.length ? '|' : ''));
+            idx += dir;
+            if (idx > text.length) { idx = text.length; dir = -1; setTimeout(tick, 2000); return; }
+            if (idx < 0) { idx = 0; dir = 1; setTimeout(tick, 1000); return; }
+            setTimeout(tick, 60);
+        }
+        tick();
     })();
 </script>
 
