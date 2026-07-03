@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Player de Música - YourOWNspace</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -23,11 +24,11 @@
 
         .main-container {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             align-items: stretch;
             position: relative;
             z-index: 1;
-            max-width: 1200px;
+            max-width: 1000px;
             width: 100%;
             justify-content: center;
         }
@@ -39,39 +40,138 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
-            padding: 25px;
-            width: 340px;
-            min-width: 280px;
+            padding: 20px;
+            width: 280px;
+            min-width: 240px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
         .painel-pesquisa h2 {
-            font-size: 18px;
+            font-size: 15px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: #b0b0b0;
             text-shadow: 0 0 20px rgba(192,192,192,0.3);
             margin-bottom: 15px;
             text-align: center;
             font-family: 'Consolas', 'Courier New', monospace;
         }
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            font-size: 14px;
+            color: rgba(192,192,192,0.5);
+            pointer-events: none;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .search-add-btn {
+            position: absolute;
+            right: 5px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(192,192,192,0.25);
+            background: linear-gradient(145deg, rgba(180,180,180,0.2), rgba(120,120,120,0.1));
+            color: rgba(200,200,200,0.6);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            line-height: 1;
+            padding: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+            z-index: 5;
+        }
+        .search-add-btn:hover {
+            border-color: #cc3333;
+            color: #cc3333;
+            background: linear-gradient(145deg, rgba(204,51,51,0.2), rgba(150,30,30,0.1));
+            box-shadow: 0 0 12px rgba(204,51,51,0.3);
+        }
+        .search-add-btn.ativo {
+            border-color: #cc3333;
+            color: #cc3333;
+            background: linear-gradient(145deg, rgba(204,51,51,0.25), rgba(150,30,30,0.15));
+        }
+        /* === ADD MENU === */
+        .add-menu {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 200px;
+            background: linear-gradient(145deg, rgba(30,30,40,0.95), rgba(20,20,30,0.95));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(192,192,192,0.15);
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(204,51,51,0.1);
+            display: none;
+            z-index: 20;
+            overflow: hidden;
+        }
+        .add-menu.show { display: block; }
+        .add-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            color: rgba(200,200,200,0.7);
+            transition: 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .add-menu-item:hover {
+            background: rgba(204,51,51,0.12);
+            color: #cc3333;
+        }
+        .add-menu-item .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.5;
+        }
+        .add-menu-item:hover .menu-icon { opacity: 1; }
         .painel-pesquisa input[type="text"] {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 40px 12px 32px;
             border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.08);
-            color: white;
+            border: 1px solid rgba(192,192,192,0.2);
+            background: linear-gradient(145deg, rgba(180,180,180,0.12), rgba(120,120,120,0.06));
+            color: #ddd;
             font-size: 14px;
             outline: none;
             transition: 0.3s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.05);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
         .painel-pesquisa input[type="text"]:focus {
             border-color: #cc3333;
-            box-shadow: 0 0 15px rgba(204,51,51,0.3);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(204,51,51,0.3);
         }
         .painel-pesquisa input[type="text"]::placeholder {
-            color: rgba(255,255,255,0.4);
+            color: rgba(200,200,200,0.4);
+        }
+        .painel-pesquisa input[type="text"].modo-plus {
+            background: linear-gradient(145deg, rgba(204,51,51,0.15), rgba(150,30,30,0.08));
+            border-color: #cc3333;
+            box-shadow: inset 0 0 20px rgba(204,51,51,0.15), 0 0 10px rgba(204,51,51,0.2);
         }
         .btn-add-musica {
             display: block;
@@ -98,8 +198,8 @@
             background: rgba(204,51,51,0.1);
         }
         .resultados-pesquisa {
-            margin-top: 15px;
-            max-height: 300px;
+            margin-top: 12px;
+            max-height: 200px;
             overflow-y: auto;
         }
         .resultados-pesquisa::-webkit-scrollbar {
@@ -113,10 +213,10 @@
             border-radius: 2px;
         }
         .item-pesquisa {
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             transition: 0.2s;
             margin-bottom: 4px;
             display: flex;
@@ -139,11 +239,11 @@
 
         /* ===== IPOD (CENTRO) ===== */
         .ipod {
-            width: 340px;
-            min-width: 300px;
+            width: 280px;
+            min-width: 240px;
             background: linear-gradient(145deg, #e8e8e8, #c0c0c0, #a8a8a8);
-            border-radius: 30px;
-            padding: 18px;
+            border-radius: 24px;
+            padding: 14px;
             box-shadow:
                 0 15px 50px rgba(0,0,0,0.5),
                 inset 0 2px 4px rgba(255,255,255,0.3),
@@ -153,19 +253,19 @@
         .ipod-ecra {
             background: #111 url('bg_ecra.jpg') no-repeat center;
             background-size: cover;
-            border-radius: 16px;
-            padding: 16px;
-            min-height: 200px;
+            border-radius: 14px;
+            padding: 12px;
+            min-height: 160px;
             border: 2px solid #555;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
             color: white;
         }
         .ipod-ecra .capa {
             width: 100%;
-            max-width: 240px;
-            height: 180px;
+            max-width: 180px;
+            height: 130px;
             border-radius: 12px;
             object-fit: cover;
             margin: 0 auto 12px;
@@ -174,13 +274,13 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .ipod-ecra .titulo {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
             color: #aa2222;
             text-shadow: 0 0 10px rgba(204,51,51,0.4);
         }
         .ipod-ecra .artista {
-            font-size: 12px;
+            font-size: 11px;
             color: #cc3333;
             margin-top: 2px;
         }
@@ -206,16 +306,16 @@
         .ipod-ecra .tempos {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
+            font-size: 9px;
             color: rgba(255,255,255,0.5);
-            margin-top: 4px;
+            margin-top: 3px;
         }
         .ipod-ecra .letra-ecra {
-            margin-top: 8px;
-            font-size: 11px;
+            margin-top: 6px;
+            font-size: 10px;
             color: #ccc;
-            min-height: 18px;
-            line-height: 1.4;
+            min-height: 14px;
+            line-height: 1.3;
             font-family: 'Consolas', 'Courier New', monospace;
             text-shadow: 0 0 8px rgba(204,51,51,0.4);
             transition: opacity 0.3s;
@@ -223,8 +323,8 @@
 
         /* === CLICK WHEEL DO IPOD === */
         .click-wheel {
-            width: 220px;
-            height: 220px;
+            width: 170px;
+            height: 170px;
             border-radius: 50%;
             background: conic-gradient(
                 #d0d0d0 0deg, #f0f0f0 45deg, #b8b8b8 90deg,
@@ -244,7 +344,7 @@
         .wheel-btn {
             position: absolute;
             color: #666;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             letter-spacing: 1px;
             cursor: pointer;
@@ -252,14 +352,14 @@
             text-shadow: 0 1px 0 rgba(255,255,255,0.3);
         }
         .wheel-btn:hover { color: #cc3333; }
-        .wheel-btn.menu { top: 18px; left: 50%; transform: translateX(-50%); }
-        .wheel-btn.prev { left: 18px; top: 50%; transform: translateY(-50%); }
-        .wheel-btn.next { right: 18px; top: 50%; transform: translateY(-50%); }
-        .wheel-btn.prevv { left: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); font-size: 8px; display: none; }
+        .wheel-btn.menu { top: 12px; left: 50%; transform: translateX(-50%); }
+        .wheel-btn.prev { left: 12px; top: 50%; transform: translateY(-50%); }
+        .wheel-btn.next { right: 12px; top: 50%; transform: translateY(-50%); }
+        .wheel-btn.prevv { left: 8px; top: 50%; transform: translateY(-50%) rotate(90deg); font-size: 7px; display: none; }
 
         .wheel-center {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(145deg, #fff, #e0e0e0);
             box-shadow:
@@ -308,9 +408,9 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
-            padding: 25px;
-            width: 280px;
-            min-width: 220px;
+            padding: 20px;
+            width: 240px;
+            min-width: 180px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
@@ -365,13 +465,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-top: 12px;
-            font-size: 11px;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 10px;
             font-family: 'Consolas', 'Courier New', monospace;
         }
         .volume-container input {
-            width: 90px;
+            width: 70px;
             -webkit-appearance: none;
             appearance: none;
             height: 6px;
@@ -556,7 +656,45 @@
             color: white;
             font-size: 13px;
         }
-
+        .user-bar .profile-info {
+            position: relative;
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 42px;
+            left: 0;
+            width: 160px;
+            background: linear-gradient(145deg, rgba(30,30,40,0.96), rgba(20,20,30,0.96));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(192,192,192,0.12);
+            border-radius: 12px;
+            padding: 5px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            display: none;
+            z-index: 200;
+        }
+        .profile-dropdown.show { display: block; }
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: rgba(200,200,200,0.7);
+            transition: 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .profile-dropdown-item:hover {
+            background: rgba(204,51,51,0.12);
+            color: #cc3333;
+        }
         /* === PROFILE MODAL === */
         .profile-overlay {
             position: fixed;
@@ -642,6 +780,95 @@
             transition: 0.3s;
         }
         .profile-modal .btn-close:hover {
+            border-color: #cc3333;
+            color: #cc3333;
+        }
+
+        /* === CREATE PLAYLIST MODAL === */
+        .criar-playlist-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+        .criar-playlist-overlay.show { display: flex; }
+        .criar-playlist-modal {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 30px;
+            padding: 30px;
+            width: 320px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .criar-playlist-modal h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #b0b0b0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .criar-playlist-modal .pl-cover {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            display: block;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+        }
+        .criar-playlist-modal input, .criar-playlist-modal textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: white;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            font-family: 'Consolas', 'Courier New', monospace;
+            resize: none;
+        }
+        .criar-playlist-modal input:focus, .criar-playlist-modal textarea:focus {
+            border-color: #cc3333;
+        }
+        .criar-playlist-modal textarea {
+            min-height: 60px;
+        }
+        .criar-playlist-modal .pl-btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(135deg, #cc3333, #aa2222);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+        .criar-playlist-modal .pl-btn:hover {
+            transform: scale(1.03);
+        }
+        .criar-playlist-modal .pl-btn-cancel {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.4);
+            margin-top: 8px;
+        }
+        .criar-playlist-modal .pl-btn-cancel:hover {
             border-color: #cc3333;
             color: #cc3333;
         }
@@ -733,6 +960,145 @@
             cursor: pointer;
         }
 
+        /* === FAVORITOS === */
+        .btn-favorito {
+            background: none; border: none;
+            font-size: 22px; cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            transition: 0.2s; padding: 0; line-height: 1;
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-favorito:hover { color: rgba(255,255,255,0.8); transform: scale(1.15); }
+        .btn-favorito.ativo { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
+        .ipod-controls-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; margin-top: 6px;
+        }
+        .shuffle-indicator, .repeat-indicator {
+            font-size: 18px; cursor: pointer;
+            transition: 0.2s; user-select: none;
+            display: inline-flex; align-items: center; justify-content: center;
+            line-height: 1; width: 28px; height: 28px;
+            color: rgba(255,255,255,0.5);
+        }
+        .shuffle-indicator:hover, .repeat-indicator:hover { color: rgba(255,255,255,0.8); transform: scale(1.15); }
+        .shuffle-indicator.ativo { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
+        .repeat-indicator.repeat-all { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
+        .repeat-indicator.repeat-one { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
+
+        /* === VISUALIZER === */
+        .visualizer-canvas {
+            width: 100%; max-width: 200px; height: 36px;
+            border-radius: 6px; margin: 4px auto 0;
+            display: block;
+        }
+
+        /* === DRAG OVERLAY === */
+        .drag-overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(204,51,51,0.15);
+            border: 4px dashed rgba(204,51,51,0.5);
+            z-index: 998; pointer-events: none;
+            align-items: center; justify-content: center;
+        }
+        .drag-overlay span {
+            color: rgba(255,255,255,0.6);
+            font-size: 24px; font-family: 'Consolas','Courier New',monospace;
+            letter-spacing: 3px; text-transform: uppercase;
+        }
+        body.drag-over .drag-overlay { display: flex; }
+
+        /* === PLAYLISTS === */
+        .playlist-section {
+            margin-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 12px;
+        }
+        .playlist-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .playlist-section h3 {
+            font-size: 14px; text-transform: uppercase; letter-spacing: 2px;
+            color: #b0b0b0; text-shadow: 0 0 20px rgba(192,192,192,0.3);
+            font-family: 'Consolas','Courier New',monospace;
+            margin: 0;
+        }
+        .playlist-add-btn {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(192,192,192,0.2);
+            background: linear-gradient(145deg, rgba(180,180,180,0.15), rgba(120,120,120,0.08));
+            color: rgba(200,200,200,0.5);
+            font-size: 16px; font-weight: bold;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+            line-height: 1; padding: 0;
+        }
+        .playlist-add-btn:hover {
+            border-color: #cc3333;
+            color: #cc3333;
+            background: linear-gradient(145deg, rgba(204,51,51,0.2), rgba(150,30,30,0.1));
+            box-shadow: 0 0 10px rgba(204,51,51,0.3);
+        }
+        .playlist-item {
+            padding: 8px 12px; border-radius: 10px; cursor: pointer;
+            font-size: 12px; transition: 0.2s; margin-bottom: 3px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid transparent; color: rgba(255,255,255,0.7);
+        }
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(204,51,51,0.3);
+        }
+        .playlist-item.ativa {
+            background: rgba(204,51,51,0.15);
+            border-color: rgba(204,51,51,0.4); color: #cc3333;
+        }
+        .playlist-item .del-playlist {
+            background: none; border: none; color: rgba(255,255,255,0.2);
+            cursor: pointer; font-size: 14px; padding: 0 4px; transition: 0.2s;
+        }
+        .playlist-item .del-playlist:hover { color: #cc3333; }
+
+        /* === MINI PLAYER === */
+        .mini-player {
+            position: fixed; bottom: -80px; left: 0; right: 0; height: 64px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 1000;
+            transition: bottom 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
+        }
+        .mini-player.show { bottom: 0; }
+        .mini-info { display: flex; align-items: center; gap: 12px; cursor: pointer; flex: 1; min-width: 0; }
+        .mini-capa { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+        .mini-texto { display: flex; flex-direction: column; min-width: 0; }
+        .mini-titulo { font-size: 13px; color: white; font-weight: bold; font-family: 'Consolas','Courier New',monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mini-artista { font-size: 11px; color: #cc3333; font-family: 'Consolas','Courier New',monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mini-controls { display: flex; align-items: center; gap: 6px; margin-left: 15px; }
+        .mini-btn {
+            background: none; border: none; color: rgba(255,255,255,0.6);
+            font-size: 18px; cursor: pointer; padding: 8px 10px;
+            border-radius: 50%; transition: 0.2s; line-height: 1;
+        }
+        .mini-btn:hover { color: #cc3333; background: rgba(204,51,51,0.1); }
+        .mini-btn.mini-play {
+            font-size: 20px; color: white;
+            background: rgba(204,51,51,0.2);
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .mini-btn.mini-play:hover { background: rgba(204,51,51,0.4); }
+
         @media (max-width: 900px) {
             .main-container {
                 flex-direction: column;
@@ -747,6 +1113,8 @@
 </head>
 <body>
 
+    <div class="drag-overlay"><span>Largar músicas aqui</span></div>
+
     <div class="metro-lines">
         <div class="line line1"></div>
         <div class="line line2"></div>
@@ -760,9 +1128,14 @@
 
     <!-- USER BAR -->
     <div class="user-bar" id="userBar" style="display:none">
-        <div class="profile-info" onclick="abrirProfile()">
+        <div class="profile-info" onclick="toggleProfileDropdown()">
             <img class="profile-avatar" id="profileAvatar" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=P" alt="avatar">
             <span class="profile-name" id="profileName">Utilizador</span>
+            <div class="profile-dropdown" id="profileDropdown" onclick="event.stopPropagation()">
+                <button class="profile-dropdown-item" onclick="abrirProfile()">Perfil</button>
+                <button class="profile-dropdown-item" onclick="abrirSettings()">Settings</button>
+                <button class="profile-dropdown-item" onclick="logout()">Quit</button>
+            </div>
         </div>
         <button class="btn-sair" onclick="logout()">Sair</button>
     </div>
@@ -777,6 +1150,19 @@
             <button class="btn-save" onclick="guardarProfile()">Guardar</button>
             <br>
             <button class="btn-close" onclick="fecharProfile()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- CREATE PLAYLIST MODAL -->
+    <div class="criar-playlist-overlay" id="criarPlaylistOverlay">
+        <div class="criar-playlist-modal">
+            <h2>Nova Playlist</h2>
+            <img class="pl-cover" id="plCoverPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23222'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%23555' font-size='30' font-family='monospace'%3E🎵%3C/text%3E%3C/svg%3E" onclick="document.getElementById('plCoverInput').click()" title="Clique para adicionar foto">
+            <input type="file" id="plCoverInput" accept="image/*" style="display:none">
+            <input type="text" id="plNameInput" placeholder="Nome da playlist">
+            <textarea id="plDescInput" placeholder="Descrição (opcional)"></textarea>
+            <button class="pl-btn" onclick="guardarNovaPlaylist()">Criar Playlist</button>
+            <button class="pl-btn pl-btn-cancel" onclick="fecharCriarPlaylist()">Cancelar</button>
         </div>
     </div>
 
@@ -812,10 +1198,24 @@
     <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
     <div class="painel-pesquisa">
         <h2>My Mind</h2>
-        <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar artista...">
+            <button class="search-add-btn" id="searchAddBtn" onclick="toggleAddMenu()">+</button>
+            <div class="add-menu" id="addMenu">
+                <button class="add-menu-item" onclick="addSongClick()"><span class="menu-icon">🎵</span> Add Song</button>
+                <button class="add-menu-item" onclick="addFolderClick()"><span class="menu-icon">📁</span> Add Playlist (Folder)</button>
+                <button class="add-menu-item" onclick="addPlaylistClick()"><span class="menu-icon">📋</span> Create a Playlist</button>
+            </div>
+        </div>
         <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
-        <button class="btn-add-musica" onclick="document.getElementById('fileInput').click()">+ Add Music Files</button>
-        <button class="btn-add-musica" onclick="document.getElementById('folderInput').click()">+ Add Music Folder</button>
+        <div class="playlist-section">
+            <div class="playlist-header">
+                <h3>Playlists</h3>
+                <button class="playlist-add-btn" onclick="abrirCriarPlaylist()" title="Criar Playlist">+</button>
+            </div>
+            <div id="playlistList"></div>
+        </div>
         <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
         <input type="file" id="folderInput" webkitdirectory multiple style="display:none">
     </div>
@@ -826,12 +1226,18 @@
             <img class="capa" id="capa" src="https://via.placeholder.com/100/1a1a2e/00d2ff?text=M%C3%BAsica" alt="Capa">
             <div class="titulo" id="titulo">Nenhuma música</div>
             <div class="artista" id="artista">---</div>
+            <div class="ipod-controls-row">
+                <button class="btn-favorito" id="btnFavorito" onclick="alternarFavorito()" title="Favorito">♡</button>
+                <span class="shuffle-indicator" id="btnShuffle" onclick="toggleShuffle()" title="Shuffle">🔀</span>
+                <span class="repeat-indicator" id="btnRepeat" onclick="cycleRepeat()" title="Repetir">⟳</span>
+            </div>
             <input class="barra-progresso" type="range" id="progresso" value="0" min="0" max="100" step="0.1">
             <div class="tempos">
                 <span id="tempoAtual">0:00</span>
                 <span id="tempoTotal">0:00</span>
             </div>
             <div class="letra-ecra" id="letraEcra"></div>
+            <canvas class="visualizer-canvas" id="visualizerCanvas" width="260" height="50"></canvas>
         </div>
 
         <div class="click-wheel">
@@ -853,6 +1259,22 @@
         <div class="letra-content" id="letraContent">
             <div class="sem-letra">Seleciona uma música<br>para ver a letra</div>
         </div>
+    </div>
+</div>
+
+<div class="mini-player" id="miniPlayer">
+    <div class="mini-info" onclick="mostrarPlayerCompleto()">
+        <img class="mini-capa" id="miniCapa" src="cover0.jpg" alt="">
+        <div class="mini-texto">
+            <span class="mini-titulo" id="miniTitulo">Nenhuma música</span>
+            <span class="mini-artista" id="miniArtista">---</span>
+        </div>
+    </div>
+    <div class="mini-controls">
+        <button class="mini-btn" onclick="musicaAnterior()">⏮</button>
+        <button class="mini-btn mini-play" id="miniBtnPlay" onclick="alternarPlay()">▶</button>
+        <button class="mini-btn" onclick="proximaMusica()">⏭</button>
+        <button class="mini-btn" onclick="toggleMiniPlayer()" title="Minimizar">🗕</button>
     </div>
 </div>
 
@@ -933,15 +1355,16 @@
 
     function guardarBiblioteca() {
         if (!usuarioAtual) return;
-        const meta = musicas.map(function(m) {
-            return {
-                nome: m.nome,
-                artista: m.artista,
-                capa: m.capa,
-                letra: m.letra,
-                dbId: m.dbId || null
-            };
-        });
+            const meta = musicas.map(function(m) {
+                return {
+                    _id: m._id || m.dbId || null,
+                    nome: m.nome,
+                    artista: m.artista,
+                    capa: m.capa,
+                    letra: m.letra,
+                    dbId: m.dbId || null
+                };
+            });
         localStorage.setItem(getStorageKey(), JSON.stringify(meta));
     }
 
@@ -955,6 +1378,7 @@
                     if (blob) {
                         const url = URL.createObjectURL(blob);
                         return {
+                            _id: item._id || item.dbId,
                             nome: item.nome,
                             artista: item.artista,
                             ficheiro: url,
@@ -1041,6 +1465,7 @@
         localStorage.removeItem('chromecore_session');
         document.getElementById('loginOverlay').style.display = 'flex';
         document.getElementById('userBar').style.display = 'none';
+        document.getElementById('miniPlayer').classList.remove('show');
         musicas.length = 0;
         audio.src = '';
         tituloEl.textContent = 'Nenhuma música';
@@ -1049,6 +1474,14 @@
         letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
         resultadosPesquisa.innerHTML = '';
         indiceAtual = 0;
+        shuffleOn = false;
+        repeatMode = 0;
+        playlistAtiva = null;
+        document.getElementById('btnShuffle').classList.remove('ativo');
+        document.getElementById('btnRepeat').className = 'repeat-indicator';
+        document.getElementById('btnRepeat').textContent = '⟳';
+        document.getElementById('btnFavorito').className = 'btn-favorito';
+        document.getElementById('btnFavorito').textContent = '♡';
     }
 
     // --- Profile ---
@@ -1068,9 +1501,24 @@
         document.getElementById('avatarPreview').style.objectPosition = posX + '% ' + posY + '%';
     }
 
+    function toggleProfileDropdown() {
+        var dd = document.getElementById('profileDropdown');
+        dd.classList.toggle('show');
+    }
+
     function abrirProfile() {
+        fecharProfileDropdown();
         carregarProfile();
         document.getElementById('profileOverlay').classList.add('show');
+    }
+
+    function fecharProfileDropdown() {
+        document.getElementById('profileDropdown').classList.remove('show');
+    }
+
+    function abrirSettings() {
+        fecharProfileDropdown();
+        alert('Settings - em breve');
     }
 
     function fecharProfile() {
@@ -1251,6 +1699,17 @@
     const musicas = [];
     let indiceAtual = 0;
     let indiceLinhaAtual = -1;
+    let shuffleOn = false;
+    let repeatMode = 0; // 0=off, 1=all, 2=one
+    let favoritos = [];
+    let playlists = {};
+    let playlistAtiva = null;
+    let audioContext = null;
+    let analyser = null;
+    let vizSource = null;
+    let vizCanvas = null;
+    let vizCtx = null;
+    let vizAnimId = null;
 
     function atualizarMediaSession() {
         if ('mediaSession' in navigator) {
@@ -1356,8 +1815,8 @@
     }
 
     var capasFixas = [
-        'cover0.jpg', 'cover1.jpg', 'cover2.jpg', 'cover3.jpg',
-        'cover5.jpg', 'cover6.jpg'
+        'cover0.jpg', 'cover1.jpg', 'cover2.jpg',
+        'cover5.jpg', 'cover6.jpg', 'cover7.jpg'
     ];
 
     function carregarMusica(index) {
@@ -1376,6 +1835,13 @@
         if (musica.artista && musica.artista !== 'Desconhecido') {
             buscarLetraAPI(musica.artista, musica.nome);
         }
+        // --- mini-player ---
+        document.getElementById('miniCapa').src = capasFixas[index % capasFixas.length];
+        document.getElementById('miniTitulo').textContent = musica.nome;
+        document.getElementById('miniArtista').textContent = musica.artista;
+        document.getElementById('miniPlayer').classList.add('show');
+        // --- favoritos ---
+        atualizarBtnFavorito();
     }
 
     function alternarPlay() {
@@ -1385,14 +1851,36 @@
 
     function musicaAnterior() {
         if (musicas.length === 0) return;
-        let novoIndex = (indiceAtual - 1 + musicas.length) % musicas.length;
+        let novoIndex;
+        if (shuffleOn) {
+            do { novoIndex = Math.floor(Math.random() * musicas.length); }
+            while (novoIndex === indiceAtual && musicas.length > 1);
+        } else {
+            novoIndex = (indiceAtual - 1 + musicas.length) % musicas.length;
+        }
         carregarMusica(novoIndex);
         audio.play();
     }
 
     function proximaMusica() {
         if (musicas.length === 0) return;
-        let novoIndex = (indiceAtual + 1) % musicas.length;
+        if (repeatMode === 2) {
+            audio.currentTime = 0;
+            audio.play();
+            return;
+        }
+        let novoIndex;
+        if (shuffleOn) {
+            do { novoIndex = Math.floor(Math.random() * musicas.length); }
+            while (novoIndex === indiceAtual && musicas.length > 1);
+        } else {
+            novoIndex = (indiceAtual + 1);
+            if (repeatMode === 0 && novoIndex >= musicas.length) {
+                audio.pause();
+                return;
+            }
+            novoIndex = novoIndex % musicas.length;
+        }
         carregarMusica(novoIndex);
         audio.play();
     }
@@ -1450,11 +1938,15 @@
     audio.addEventListener('play', function() {
         btnPlay.style.transform = 'scale(1.05)';
         playerCard.classList.add('tocando');
+        document.getElementById('miniBtnPlay').textContent = '⏸';
+        if (!audioContext) setupVisualizer();
+        if (audioContext && audioContext.state === 'suspended') audioContext.resume();
     });
 
     audio.addEventListener('pause', function() {
         btnPlay.style.transform = 'scale(1)';
         playerCard.classList.remove('tocando');
+        document.getElementById('miniBtnPlay').textContent = '▶';
     });
 
     audio.addEventListener('timeupdate', function() {
@@ -1477,7 +1969,12 @@
     });
 
     audio.addEventListener('ended', function() {
-        proximaMusica();
+        if (repeatMode === 2) {
+            audio.currentTime = 0;
+            audio.play();
+        } else {
+            proximaMusica();
+        }
     });
 
     audio.addEventListener('error', function() {
@@ -1510,15 +2007,22 @@
     // --- Pesquisa de artistas ---
     function atualizarPesquisa() {
         const termo = pesquisaInput.value.toLowerCase().trim();
-        const filtradas = musicas.filter(function(m) {
+        var filtradas = musicas.filter(function(m) {
             return (m.artista && m.artista.toLowerCase().includes(termo)) ||
                    (m.nome && m.nome.toLowerCase().includes(termo));
         });
+        if (playlistAtiva && playlists[playlistAtiva]) {
+            var ids = playlists[playlistAtiva].musicas || playlists[playlistAtiva];
+            filtradas = filtradas.filter(function(m) {
+                var mid = m._id || m.dbId || musicas.indexOf(m);
+                return ids.indexOf(mid) >= 0;
+            });
+        }
         if (filtradas.length === 0) {
             resultadosPesquisa.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:10px;text-align:center;font-size:12px;">Nenhum resultado</div>';
             return;
         }
-        let html = '';
+        var html = '';
         filtradas.forEach(function(m) {
             const realIndex = musicas.indexOf(m);
             html += '<div class="item-pesquisa" data-index="' + realIndex + '">' +
@@ -1545,30 +2049,50 @@
         for (let i = 0; i < ficheiros.length; i++) {
             const f = ficheiros[i];
             if (!f.type.startsWith('audio/')) continue;
-            const nomeCompleto = f.name.replace(/\.[^.]+$/, '');
-            let nome = nomeCompleto;
-            let artista = 'Desconhecido';
-            const separador = nomeCompleto.indexOf(' - ');
-            if (separador > 0) {
-                artista = nomeCompleto.substring(0, separador).trim();
-                nome = nomeCompleto.substring(separador + 3).trim();
-            }
-            const dup = musicas.some(function(m) {
-                return m.nome.toLowerCase() === nome.toLowerCase();
-            });
-            if (dup) continue;
-            const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
-            const promise = guardarAudioNoDB(dbId, f).then(function() {
-                const url = URL.createObjectURL(f);
-                musicas.push({
-                    nome: nome,
-                    artista: artista,
-                    ficheiro: url,
-                    capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
-                    letra: [],
-                    dbId: dbId
-                });
-                count++;
+            const promise = new Promise(function(resolve) {
+                const nomeCompleto = f.name.replace(/\.[^.]+$/, '');
+                let nome = nomeCompleto;
+                let artista = 'Desconhecido';
+                function finalizar(n, a) {
+                    const dup = musicas.some(function(m) {
+                        return m.nome.toLowerCase() === n.toLowerCase();
+                    });
+                    if (dup) { resolve(); return; }
+                    const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
+                    guardarAudioNoDB(dbId, f).then(function() {
+                        const url = URL.createObjectURL(f);
+                        musicas.push({
+                            _id: dbId,
+                            nome: n,
+                            artista: a,
+                            ficheiro: url,
+                            capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
+                            letra: [],
+                            dbId: dbId
+                        });
+                        count++;
+                        resolve();
+                    });
+                }
+                if (typeof jsmediatags !== 'undefined' && jsmediatags && jsmediatags.read) {
+                    jsmediatags.read(f, {
+                        onSuccess: function(tag) {
+                            const t = tag.tags;
+                            finalizar(
+                                (t.title || '').trim() || nome,
+                                (t.artist || '').trim() || artista
+                            );
+                        },
+                        onError: function() { finalizar(nome, artista); }
+                    });
+                } else {
+                    const separador = nomeCompleto.indexOf(' - ');
+                    if (separador > 0) {
+                        artista = nomeCompleto.substring(0, separador).trim();
+                        nome = nomeCompleto.substring(separador + 3).trim();
+                    }
+                    finalizar(nome, artista);
+                }
             });
             promises.push(promise);
         }
@@ -1622,7 +2146,320 @@
         });
     }
 
-    // --- Auto-login (sessão persistente) ---
+    // =============================================
+    // KEYBOARD SHORTCUTS
+    // =============================================
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.code === 'Space') { e.preventDefault(); alternarPlay(); }
+        if (e.code === 'ArrowLeft') musicaAnterior();
+        if (e.code === 'ArrowRight') proximaMusica();
+        if (e.code === 'KeyS') toggleShuffle();
+        if (e.code === 'KeyR') cycleRepeat();
+        if (e.code === 'KeyF') alternarFavorito();
+        if (e.code === 'KeyM') toggleMiniPlayer();
+    });
+
+    // =============================================
+    // DRAG & DROP
+    // =============================================
+    document.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        document.body.classList.add('drag-over');
+    });
+    document.addEventListener('dragleave', function(e) {
+        if (!e.relatedTarget || e.relatedTarget === document.body) {
+            document.body.classList.remove('drag-over');
+        }
+    });
+    document.addEventListener('drop', function(e) {
+        e.preventDefault();
+        document.body.classList.remove('drag-over');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            adicionarMusicas(e.dataTransfer.files);
+        }
+    });
+
+    // "+" menu toggle and actions
+    function toggleAddMenu() {
+        var menu = document.getElementById('addMenu');
+        var btn = document.getElementById('searchAddBtn');
+        var input = document.getElementById('pesquisaInput');
+        menu.classList.toggle('show');
+        btn.classList.toggle('ativo');
+        input.classList.toggle('modo-plus');
+    }
+
+    function fecharAddMenu() {
+        document.getElementById('addMenu').classList.remove('show');
+        document.getElementById('searchAddBtn').classList.remove('ativo');
+        document.getElementById('pesquisaInput').classList.remove('modo-plus');
+    }
+
+    function addSongClick() {
+        fecharAddMenu();
+        document.getElementById('fileInput').click();
+    }
+
+    function addFolderClick() {
+        fecharAddMenu();
+        document.getElementById('folderInput').click();
+    }
+
+    function addPlaylistClick() {
+        fecharAddMenu();
+        abrirCriarPlaylist();
+    }
+
+    // Close menus on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-wrapper')) {
+            fecharAddMenu();
+        }
+        if (!e.target.closest('.profile-info')) {
+            fecharProfileDropdown();
+        }
+    });
+
+    // =============================================
+    // SHUFFLE & REPEAT
+    // =============================================
+    function toggleShuffle() {
+        shuffleOn = !shuffleOn;
+        document.getElementById('btnShuffle').classList.toggle('ativo', shuffleOn);
+    }
+
+    function cycleRepeat() {
+        repeatMode = (repeatMode + 1) % 3;
+        var btn = document.getElementById('btnRepeat');
+        btn.className = 'repeat-indicator';
+        if (repeatMode === 0) { btn.textContent = '⟳'; }
+        else if (repeatMode === 1) { btn.textContent = '⟳'; btn.classList.add('repeat-all'); }
+        else if (repeatMode === 2) { btn.textContent = '⟳1'; btn.classList.add('repeat-one'); }
+    }
+
+    // =============================================
+    // FAVORITES
+    // =============================================
+    function getFavKey() { return 'chromecore_favs_' + usuarioAtual; }
+
+    function carregarFavoritos() {
+        if (!usuarioAtual) return;
+        try { favoritos = JSON.parse(localStorage.getItem(getFavKey()) || '[]'); }
+        catch(e) { favoritos = []; }
+    }
+
+    function guardarFavoritos() {
+        if (!usuarioAtual) return;
+        localStorage.setItem(getFavKey(), JSON.stringify(favoritos));
+    }
+
+    function alternarFavorito() {
+        if (!usuarioAtual || musicas.length === 0) return;
+        var musica = musicas[indiceAtual];
+        var id = musica._id || musica.dbId || indiceAtual;
+        var idx = favoritos.indexOf(id);
+        if (idx >= 0) { favoritos.splice(idx, 1); }
+        else { favoritos.push(id); }
+        guardarFavoritos();
+        atualizarBtnFavorito();
+    }
+
+    function atualizarBtnFavorito() {
+        var btn = document.getElementById('btnFavorito');
+        if (!usuarioAtual || musicas.length === 0 || !musicas[indiceAtual]) {
+            btn.classList.remove('ativo'); btn.textContent = '♡';
+            return;
+        }
+        var id = musicas[indiceAtual]._id || musicas[indiceAtual].dbId || indiceAtual;
+        if (favoritos.indexOf(id) >= 0) {
+            btn.classList.add('ativo'); btn.textContent = '♥';
+        } else {
+            btn.classList.remove('ativo'); btn.textContent = '♡';
+        }
+    }
+
+    // =============================================
+    // AUDIO VISUALIZER
+    // =============================================
+    function setupVisualizer() {
+        if (audioContext) return;
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            vizSource = audioContext.createMediaElementSource(audio);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 128;
+            vizSource.connect(analyser);
+            analyser.connect(audioContext.destination);
+            vizCanvas = document.getElementById('visualizerCanvas');
+            vizCtx = vizCanvas.getContext('2d');
+            desenharVisualizer();
+        } catch(e) {
+            console.warn('Visualizer not available:', e);
+        }
+    }
+
+    function desenharVisualizer() {
+        if (!analyser || !vizCtx) return;
+        var bufferLength = analyser.frequencyBinCount;
+        var dataArray = new Uint8Array(bufferLength);
+        function draw() {
+            vizAnimId = requestAnimationFrame(draw);
+            analyser.getByteFrequencyData(dataArray);
+            var canvas = vizCanvas;
+            var ctx = vizCtx;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            var barWidth = (canvas.width / bufferLength) * 2.5;
+            var x = 0;
+            for (var i = 0; i < bufferLength; i++) {
+                var barHeight = (dataArray[i] / 255) * canvas.height;
+                ctx.fillStyle = 'rgba(170,34,34,' + (0.4 + (dataArray[i] / 255) * 0.6) + ')';
+                ctx.fillRect(x, canvas.height - barHeight, Math.max(1, barWidth - 1), barHeight);
+                x += barWidth + 0.5;
+            }
+        }
+        draw();
+    }
+
+    // =============================================
+    // PLAYLISTS
+    // =============================================
+    function getPlaylistKey() { return 'chromecore_playlists_' + usuarioAtual; }
+
+    function carregarPlaylists() {
+        if (!usuarioAtual) return;
+        try { playlists = JSON.parse(localStorage.getItem(getPlaylistKey()) || '{}'); }
+        catch(e) { playlists = {}; }
+        // Migrate old format (plain array) to new format (object)
+        Object.keys(playlists).forEach(function(k) {
+            if (Array.isArray(playlists[k])) {
+                playlists[k] = { musicas: playlists[k], desc: '', cover: '' };
+            }
+        });
+        renderPlaylists();
+    }
+
+    function guardarPlaylists() {
+        if (!usuarioAtual) return;
+        localStorage.setItem(getPlaylistKey(), JSON.stringify(playlists));
+        renderPlaylists();
+    }
+
+    function abrirCriarPlaylist() {
+        document.getElementById('plNameInput').value = '';
+        document.getElementById('plDescInput').value = '';
+        document.getElementById('plCoverPreview').src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23222\'/%3E%3Ctext x=\'50\' y=\'55\' text-anchor=\'middle\' fill=\'%23555\' font-size=\'30\' font-family=\'monospace\'%3E🎵%3C/text%3E%3C/svg%3E';
+        document.getElementById('criarPlaylistOverlay').classList.add('show');
+    }
+
+    function fecharCriarPlaylist() {
+        document.getElementById('criarPlaylistOverlay').classList.remove('show');
+    }
+
+    function guardarNovaPlaylist() {
+        var nome = document.getElementById('plNameInput').value.trim();
+        if (!nome) { alert('Insere um nome para a playlist.'); return; }
+        if (playlists[nome]) { alert('Já existe uma playlist com esse nome.'); return; }
+        var desc = document.getElementById('plDescInput').value.trim();
+        var cover = document.getElementById('plCoverPreview').src;
+        playlists[nome] = { musicas: [], desc: desc, cover: cover };
+        guardarPlaylists();
+        fecharCriarPlaylist();
+    }
+
+    // Handle playlist cover image upload
+    document.getElementById('plCoverInput').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('plCoverPreview').src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    function apagarPlaylist(nome) {
+        if (!confirm('Apagar a playlist "' + nome + '"?')) return;
+        delete playlists[nome];
+        if (playlistAtiva === nome) { playlistAtiva = null; }
+        guardarPlaylists();
+    }
+
+    function selecionarPlaylist(nome) {
+        if (playlistAtiva === nome) {
+            playlistAtiva = null;
+        } else {
+            playlistAtiva = nome;
+        }
+        renderPlaylists();
+        atualizarPesquisa();
+    }
+
+    function addMusicaPlaylist(nome) {
+        if (!usuarioAtual || musicas.length === 0 || !musicas[indiceAtual]) return;
+        var id = musicas[indiceAtual]._id || musicas[indiceAtual].dbId || indiceAtual;
+        if (!playlists[nome]) playlists[nome] = { musicas: [], desc: '', cover: '' };
+        if (playlists[nome].musicas.indexOf(id) >= 0) {
+            alert('Esta música já está na playlist.');
+            return;
+        }
+        playlists[nome].musicas.push(id);
+        guardarPlaylists();
+    }
+
+    function renderPlaylists() {
+        var el = document.getElementById('playlistList');
+        var nomes = Object.keys(playlists);
+        if (nomes.length === 0) {
+            el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:11px;text-align:center;padding:8px;">Sem playlists</div>';
+            return;
+        }
+        var html = '';
+        nomes.forEach(function(n) {
+            var pl = playlists[n];
+            var count = pl && pl.musicas ? pl.musicas.length : 0;
+            var cover = pl && pl.cover ? pl.cover : '';
+            var coverHtml = cover ? '<img src="' + cover + '" style="width:18px;height:18px;border-radius:4px;object-fit:cover;margin-right:6px;vertical-align:middle">' : '';
+            html += '<div class="playlist-item' + (playlistAtiva === n ? ' ativa' : '') + '" onclick="selecionarPlaylist(\'' + n.replace(/'/g,"\\'") + '\')">' +
+                    '<span>' + coverHtml + n + ' (' + count + ')</span>' +
+                    '<button class="del-playlist" onclick="event.stopPropagation();addMusicaPlaylist(\'' + n.replace(/'/g,"\\'") + '\')" title="Add música atual">+</button>' +
+                    '<button class="del-playlist" onclick="event.stopPropagation();apagarPlaylist(\'' + n.replace(/'/g,"\\'") + '\')">×</button>' +
+                    '</div>';
+        });
+        el.innerHTML = html;
+    }
+
+
+
+    // =============================================
+    // MINI PLAYER
+    // =============================================
+    function toggleMiniPlayer() {
+        document.getElementById('miniPlayer').classList.toggle('show');
+    }
+
+    function mostrarPlayerCompleto() {
+        document.getElementById('miniPlayer').classList.remove('show');
+        document.getElementById('player').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Override entrar to load favorites and playlists
+    entrar = function(email) {
+        usuarioAtual = email;
+        localStorage.setItem('chromecore_session', email);
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('userBar').style.display = 'flex';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        carregarProfile();
+        carregarFavoritos();
+        carregarPlaylists();
+        iniciarPlayer();
+    };
+
+    // =============================================
+    // Auto-login (sessão persistente)
+    // =============================================
     (function() {
         const sessao = localStorage.getItem('chromecore_session');
         if (sessao) {
