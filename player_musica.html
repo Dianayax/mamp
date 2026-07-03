@@ -1929,7 +1929,7 @@
 
     function redistribuirTemposLetra(duration) {
         const musica = musicas[indiceAtual];
-        if (!musica || !musica.letra || musica.letra.length === 0) return;
+        if (!musica || !musica.letra || musica.letra.length === 0 || !duration || duration <= 0 || duration === Infinity) return;
         const linhas = musica.letra;
         const intervalo = duration / linhas.length;
         linhas.forEach(function(linha, i) {
@@ -1955,13 +1955,13 @@
         atualizarPesquisa();
         indiceLinhaAtual = -1;
         atualizarMediaSession();
-        if (musica.letra && musica.letra.length > 0) {
-            if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
-                redistribuirTemposLetra(audio.duration);
-            }
+        if (musica.letra && musica.letra.length > 0 && musica.letra[0].tempo === 0) {
+            // will redistribute on loadedmetadata
         }
-        if (musica.artista && musica.artista !== 'Desconhecido') {
-            buscarLetraAPI(musica.artista, musica.nome);
+        if (!musica.letra || musica.letra.length === 0) {
+            if (musica.artista && musica.artista !== 'Desconhecido') {
+                buscarLetraAPI(musica.artista, musica.nome);
+            }
         }
         // --- mini-player ---
         document.getElementById('miniCapa').src = capasFixas[index % capasFixas.length];
@@ -2041,6 +2041,8 @@
             return;
         }
         const linhas = musica.letra;
+        // Skip if tempos not yet distributed (all zero)
+        if (linhas.length > 1 && linhas[1].tempo === 0) return;
         let novaLinha = -1;
         for (let i = linhas.length - 1; i >= 0; i--) {
             if (audio.currentTime >= linhas[i].tempo) { novaLinha = i; break; }
@@ -2131,9 +2133,9 @@
 
     audio.addEventListener('loadedmetadata', function() {
         tempoTotalEl.textContent = formatarTempo(audio.duration);
-        const musica = musicas[indiceAtual];
-        if (musica && musica.letra && musica.letra.length > 0) {
-            if (musica.letra[0].tempo === 0 && musica.letra[musica.letra.length - 1].tempo === 0) {
+        var musica = musicas[indiceAtual];
+        if (musica && musica.letra && musica.letra.length > 0 && audio.duration > 0 && audio.duration !== Infinity) {
+            if (musica.letra[0].tempo === 0) {
                 redistribuirTemposLetra(audio.duration);
             }
         }
@@ -2151,6 +2153,13 @@
     audio.addEventListener('error', function() {
         tituloEl.textContent = 'Erro ao carregar música';
         artistaEl.textContent = 'Verifica o nome do ficheiro';
+    });
+
+    audio.addEventListener('canplay', function() {
+        var musica = musicas[indiceAtual];
+        if (musica && musica.letra && musica.letra.length > 0 && musica.letra[0].tempo === 0 && audio.duration > 0 && audio.duration !== Infinity) {
+            redistribuirTemposLetra(audio.duration);
+        }
     });
 
     // --- Media Session (controlos do sistema / teclas multimedia) ---
