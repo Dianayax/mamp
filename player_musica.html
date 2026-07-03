@@ -2,6 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player de Música - YourOWNspace</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
@@ -449,6 +450,7 @@
             color: #cc3333;
             border-color: #cc3333;
         }
+        .mobile-close { display: none; }
         .letra-edit-area {
             width: 100%;
             min-height: 120px;
@@ -1378,15 +1380,172 @@
         }
         .mini-btn.mini-play:hover { background: rgba(204,51,51,0.4); }
 
-        @media (max-width: 900px) {
+        /* ===== MOBILE LAYOUT (≤768px) ===== */
+        @media (max-width: 768px) {
+            body { padding: 0; overflow-x: hidden; overscroll-behavior: none; }
             .main-container {
                 flex-direction: column;
                 align-items: center;
+                gap: 0;
+                padding: 0;
+                min-height: 100vh;
+                justify-content: flex-start;
             }
+            /* iPod fills most of the screen */
+            .ipod {
+                width: 94vw;
+                max-width: 440px;
+                min-width: 0;
+                margin: 56px auto 8px;
+                padding: 14px;
+                position: relative;
+                touch-action: manipulation;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .ipod-ecra {
+                flex: 1;
+                min-height: 200px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .ipod-ecra .capa { max-width: 160px; height: 120px; }
+            .click-wheel { width: 160px; height: 160px; flex-shrink: 0; }
+            .wheel-center { width: 56px; height: 56px; }
+
+            /* User bar adjustments */
+            .user-bar {
+                top: 0; left: 0; right: 0;
+                border-radius: 0 0 16px 16px;
+                z-index: 200;
+                padding: 8px 12px;
+            }
+
+            /* ===== MOBILE PANEL OVERLAYS ===== */
             .painel-pesquisa, .painel-playlist, .painel-letra {
-                width: 100%;
-                max-width: 340px;
+                position: fixed;
+                z-index: 500;
+                width: 85vw;
+                max-width: 320px;
+                height: 100vh;
+                top: 0;
+                border-radius: 0;
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+                box-shadow: 0 0 40px rgba(0,0,0,0.5);
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                opacity: 0;
+                pointer-events: none;
             }
+            .painel-pesquisa.panel-open,
+            .painel-playlist.panel-open,
+            .painel-letra.panel-open {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            /* Songs: slides from top */
+            .painel-pesquisa {
+                left: 0; right: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 65vh;
+                top: 0;
+                border-radius: 0 0 24px 24px;
+                transform: translateY(-100%);
+            }
+            .painel-pesquisa.panel-open { transform: translateY(0); }
+            /* Playlist: slides from left */
+            .painel-playlist {
+                left: 0;
+                top: 0;
+                transform: translateX(-100%);
+                border-radius: 0 24px 24px 0;
+            }
+            .painel-playlist.panel-open { transform: translateX(0); }
+            /* Lyrics: slides from right */
+            .painel-letra {
+                right: 0; left: auto;
+                top: 0;
+                transform: translateX(100%);
+                border-radius: 24px 0 0 24px;
+            }
+            .painel-letra.panel-open { transform: translateX(0); }
+
+            /* Panel close button (mobile) */
+            .painel-pesquisa .mobile-close,
+            .painel-playlist .mobile-close,
+            .painel-letra .mobile-close {
+                display: flex;
+                position: absolute;
+                top: 12px;
+                width: 32px; height: 32px;
+                border-radius: 50%;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(0,0,0,0.3);
+                color: rgba(255,255,255,0.5);
+                font-size: 16px;
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                transition: 0.2s;
+            }
+            .painel-pesquisa .mobile-close { right: 12px; }
+            .painel-playlist .mobile-close { right: 12px; }
+            .painel-letra .mobile-close { left: 12px; }
+            .painel-pesquisa .mobile-close:hover,
+            .painel-playlist .mobile-close:hover,
+            .painel-letra .mobile-close:hover {
+                color: #cc3333;
+                border-color: #cc3333;
+            }
+
+            /* Adjust search results */
+            .resultados-pesquisa {
+                max-height: calc(65vh - 160px);
+                flex: 1;
+            }
+            .painel-pesquisa h2 { font-size: 13px; padding-right: 40px; }
+            .painel-playlist h2 { font-size: 13px; padding-right: 40px; }
+            .painel-letra h2 { font-size: 15px; padding-left: 40px; }
+            .painel-letra .letra-content { max-height: calc(100vh - 140px); }
+
+            /* Backdrop */
+            .panel-backdrop {
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.6);
+                z-index: 499;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.35s ease;
+            }
+            .panel-backdrop.show {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            /* Visualizer canvas fits */
+            .visualizer-canvas { max-width: 100%; height: 40px; }
+
+            /* Swipe hint arrows on iPod edges */
+            .swipe-hint {
+                position: absolute;
+                color: rgba(255,255,255,0.12);
+                font-size: 18px;
+                pointer-events: none;
+                z-index: 2;
+                transition: opacity 0.5s;
+            }
+            .swipe-hint.hint-left { left: -2px; top: 50%; transform: translateY(-50%); }
+            .swipe-hint.hint-right { right: -2px; top: 50%; transform: translateY(-50%); }
+            .swipe-hint.hint-top { top: -6px; left: 50%; transform: translateX(-50%); }
+            .swipe-hint.hint-hidden { opacity: 0; }
         }
         [data-theme="castanho"] .ipod-ecra .titulo { color: #5a3020; text-shadow: 0 0 10px rgba(90,48,32,0.4); }
         [data-theme="castanho"] .ipod-ecra .artista { color: #7a4a30; }
@@ -1621,6 +1780,7 @@
     <div class="main-container">
     <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
     <div class="painel-pesquisa">
+        <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <h2>Songs</h2>
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
@@ -1639,6 +1799,7 @@
 
     <!-- PAINEL PLAYLIST -->
     <div class="painel-playlist">
+        <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <h2>Playlist</h2>
         <div class="search-wrapper" style="margin-bottom:10px">
             <span class="search-icon">🔍</span>
@@ -1687,6 +1848,7 @@
 
     <!-- PAINEL DIREITO: LETRA -->
     <div class="painel-letra">
+        <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <div class="letra-header">
             <h2>Lyrics</h2>
             <button class="btn-editar-letra" id="btnEditarLetra" onclick="toggleEditarLetra()" title="Editar letra">✎</button>
@@ -1703,6 +1865,8 @@
         </div>
     </div>
 </div>
+
+<div class="panel-backdrop" id="panelBackdrop" onclick="mobileCloseAllPanels()"></div>
 
 <div class="context-menu" id="contextMenu">
     <button class="context-menu-item" data-action="favorite"><span class="ctx-icon">♡</span> Favorito</button>
@@ -3495,6 +3659,108 @@
     (function() {
         iniciarPlaceholderAnim(document.getElementById('pesquisaPlaylist'), 'Pesquisar playlist...');
     })();
+
+    // =============================================
+    // Mobile panel management (swipe gestures)
+    // =============================================
+    var mobilePanelOpen = null;
+
+    function mobileCloseAllPanels() {
+        document.querySelectorAll('.painel-pesquisa.panel-open, .painel-playlist.panel-open, .painel-letra.panel-open').forEach(function(p) {
+            p.classList.remove('panel-open');
+        });
+        document.getElementById('panelBackdrop').classList.remove('show');
+        mobilePanelOpen = null;
+        document.body.style.overflow = '';
+    }
+
+    function mobileShowPanel(panelClass) {
+        mobileCloseAllPanels();
+        var el = document.querySelector('.' + panelClass);
+        if (!el) return;
+        el.classList.add('panel-open');
+        document.getElementById('panelBackdrop').classList.add('show');
+        mobilePanelOpen = panelClass;
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Touch swipe detection
+    var swipeX = 0, swipeY = 0, swipeTime = 0;
+    var swipeTarget = null;
+    var SWIPE_THRESHOLD = 40;
+
+    document.addEventListener('touchstart', function(e) {
+        // Ignore touches on sliders, overlays, modals, context menus
+        var t = e.target;
+        if (t.closest('.barra-progresso') || t.closest('.volume-container') ||
+            t.closest('.profile-overlay') || t.closest('.login-overlay') ||
+            t.closest('.context-menu') || t.closest('.profile-dropdown') ||
+            t.closest('.add-menu') || t.closest('.painel-pesquisa') ||
+            t.closest('.painel-playlist') || t.closest('.painel-letra') ||
+            t.closest('.panel-backdrop') || t.closest('.profile-modal') ||
+            t.closest('.criar-playlist-overlay') || t.closest('.settings-modal')) {
+            swipeTarget = null;
+            return;
+        }
+        swipeTarget = e.target;
+        var touch = e.touches[0];
+        swipeX = touch.clientX;
+        swipeY = touch.clientY;
+        swipeTime = Date.now();
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        if (!swipeTarget) return;
+        var touch = e.changedTouches[0];
+        var dx = touch.clientX - swipeX;
+        var dy = touch.clientY - swipeY;
+        var dt = Date.now() - swipeTime;
+        var absDx = Math.abs(dx);
+        var absDy = Math.abs(dy);
+
+        // Only process swipes on mobile (≤768px)
+        if (window.innerWidth > 768) return;
+        // Must be fast enough (<500ms)
+        if (dt > 500) return;
+
+        // If a panel is already open, allow swipe-back to close
+        if (mobilePanelOpen) {
+            if (mobilePanelOpen === 'painel-letra' && dx > SWIPE_THRESHOLD && absDx > absDy) {
+                mobileCloseAllPanels();
+                return;
+            }
+            if (mobilePanelOpen === 'painel-playlist' && dx < -SWIPE_THRESHOLD && absDx > absDy) {
+                mobileCloseAllPanels();
+                return;
+            }
+            if (mobilePanelOpen === 'painel-pesquisa' && dy < -SWIPE_THRESHOLD && absDy > absDx) {
+                mobileCloseAllPanels();
+                return;
+            }
+            return;
+        }
+
+        if (absDx > absDy && absDx > SWIPE_THRESHOLD) {
+            // Horizontal swipe
+            if (dx < 0) {
+                // Right to left → show lyrics
+                mobileShowPanel('painel-letra');
+            } else {
+                // Left to right → show playlists
+                mobileShowPanel('painel-playlist');
+            }
+        } else if (absDy > absDx && absDy > SWIPE_THRESHOLD && dy > 0 && swipeY < 80) {
+            // Vertical swipe down from top edge → show songs
+            mobileShowPanel('painel-pesquisa');
+        }
+    }, { passive: true });
+
+    // Close panel on Escape key (mobile)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobilePanelOpen) {
+            mobileCloseAllPanels();
+        }
+    });
 </script>
 
 </body>
