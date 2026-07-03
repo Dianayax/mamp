@@ -2358,24 +2358,68 @@
 
     pesquisaInput.addEventListener('input', atualizarPesquisa);
 
+    // --- Extrair artista/nome do nome do ficheiro ---
+    function parseNomeFicheiro(nome) {
+        var limpo = nome.replace(/\.[^.]+$/, '').trim();
+        // Remove track number do início: "01 ", "01.", "01 - ", "01) ", etc.
+        var semTrack = limpo.replace(/^\d+\s*[.\s)\]]+(?:\s*[-–—]\s*)?\s*/, '');
+        // "Artist - Song (feat. ...)"
+        var m = semTrack.match(/^(.+?)\s*[–\-\—–]\s*(.+?)(?:\s*\(.*?\))?\s*$/);
+        if (m && m[1] && m[2]) return { artista: m[1].trim(), nome: m[2].trim() };
+        // Era só track number + nome? ex: "01 Song Title" ou "01 - Song Title"
+        if (semTrack !== limpo) return { artista: 'Desconhecido', nome: semTrack };
+        // Só nome, sem artista
+        return { artista: 'Desconhecido', nome: limpo };
+    }
+
     // --- Importar músicas do computador (com persistência) ---
     function adicionarMusicas(ficheiros) {
         let count = 0;
+        var firstIdx = -1;
         const promises = [];
         for (let i = 0; i < ficheiros.length; i++) {
             const f = ficheiros[i];
             if (!f.type.startsWith('audio/')) continue;
             const promise = new Promise(function(resolve) {
-                const nomeCompleto = f.name.replace(/\.[^.]+$/, '');
-                let nome = nomeCompleto;
-                let artista = 'Desconhecido';
+                var parsed = parseNomeFicheiro(f.name);
+                let nome = parsed.nome;
+                let artista = parsed.artista;
                 let letraTags = [];
                 function finalizar(n, a, l) {
-                    const dup = musicas.some(function(m) {
-                        return m.nome.toLowerCase() === n.toLowerCase();
-                    });
-                    if (dup) { resolve(); return; }
-                    const dbId = usuarioAtual + '_' + Date.now() + '_' + i;
+                    var idxDup = -1;
+                    for (var j = 0; j < musicas.length; j++) {
+                        if (musicas[j].nome.toLowerCase() === n.toLowerCase()) {
+                            idxDup = j; break;
+                        }
+                    }
+                    if (idxDup >= 0) {
+                        if (!confirm('"' + n + '" já existe. Substituir?')) {
+                            resolve(); return;
+                        }
+                        var old = musicas[idxDup];
+                        if (old.dbId) removerAudioDoDB(old.dbId);
+                        if (old.ficheiro && old.ficheiro.startsWith('blob:')) {
+                            try { URL.revokeObjectURL(old.ficheiro); } catch(e) {}
+                        }
+                        var dbId = usuarioAtual + '_' + Date.now() + '_' + i;
+                        guardarAudioNoDB(dbId, f).then(function() {
+                            var url = URL.createObjectURL(f);
+                            musicas[idxDup] = {
+                                _id: dbId,
+                                nome: n,
+                                artista: a,
+                                ficheiro: url,
+                                capa: "https://via.placeholder.com/100/1a1a2e/ff6ec7?text=+",
+                                letra: l || [],
+                                dbId: dbId
+                            };
+                            if (firstIdx < 0 || idxDup < firstIdx) firstIdx = idxDup;
+                            count++;
+                            resolve();
+                        });
+                        return;
+                    }
+                    var dbId = usuarioAtual + '_' + Date.now() + '_' + i;
                     guardarAudioNoDB(dbId, f).then(function() {
                         const url = URL.createObjectURL(f);
                         musicas.push({
@@ -2387,6 +2431,7 @@
                             letra: l || [],
                             dbId: dbId
                         });
+                        if (firstIdx < 0) firstIdx = musicas.length - 1;
                         count++;
                         resolve();
                     });
@@ -2400,29 +2445,25 @@
                                 lyricsText = lyricsText.lyrics;
                             }
                             letraTags = processarTextoLetra(lyricsText);
+                            var tagTitle = (t.title || '').trim();
+                            var tagArtist = (t.artist || '').trim();
                             finalizar(
-                                (t.title || '').trim() || nome,
-                                (t.artist || '').trim() || artista,
+                                tagTitle || nome,
+                                tagArtist || artista,
                                 letraTags
                             );
                         },
                         onError: function() { finalizar(nome, artista, []); }
                     });
                 } else {
-                    const separador = nomeCompleto.indexOf(' - ');
-                    if (separador > 0) {
-                        artista = nomeCompleto.substring(0, separador).trim();
-                        nome = nomeCompleto.substring(separador + 3).trim();
-                    }
                     finalizar(nome, artista, []);
                 }
             });
             promises.push(promise);
         }
         Promise.all(promises).then(function() {
-            if (count > 0) {
-                const firstNew = musicas.length - count;
-                carregarMusica(firstNew);
+            if (count > 0 && firstIdx >= 0) {
+                carregarMusica(firstIdx);
                 atualizarPesquisa();
                 guardarBiblioteca();
             }
