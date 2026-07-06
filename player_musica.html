@@ -83,6 +83,8 @@
             min-width: 240px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
         }
         .painel-pesquisa h2 {
             font-size: 15px;
@@ -239,8 +241,9 @@
             background: rgba(204,51,51,0.1);
         }
         .resultados-pesquisa {
-            margin-top: 12px;
-            max-height: 200px;
+            margin-top: 6px;
+            flex: 1;
+            min-height: 0;
             overflow-y: auto;
         }
         .resultados-pesquisa::-webkit-scrollbar {
@@ -566,6 +569,7 @@
             text-align: center;
             padding: 40px 0;
         }
+        .empty-message { color: rgba(255,255,255,0.2); }
 
         /* ===== PAINEL PLAYLIST ===== */
         .painel-playlist {
@@ -1610,32 +1614,84 @@
         [data-theme="castanho"] .mini-btn:hover { color: #7a4a30; background: rgba(90,48,32,0.1); }
         [data-theme="castanho"] .mini-btn.mini-play { background: rgba(90,48,32,0.25); }
         [data-theme="castanho"] .mini-btn.mini-play:hover { background: rgba(90,48,32,0.4); }
-        [data-theme="branco-azul"] .ipod-ecra .titulo { color: #1a8a8a; text-shadow: 0 0 10px rgba(26,138,138,0.4); }
+        [data-theme="castanho"] .search-add-btn:hover,
+        [data-theme="castanho"] .search-add-btn.ativo { border-color: #7a4a30; color: #7a4a30; }
+        [data-theme="castanho"] .btn-add-musica:hover,
+        [data-theme="castanho"] .btn-add-musica.highlight { border-color: #7a4a30; color: #7a4a30; }
+        [data-theme="castanho"] .playlist-add-btn:hover { border-color: #7a4a30; color: #7a4a30; }
+        [data-theme="castanho"] .playlist-item.ativa { border-color: rgba(90,48,32,0.4); color: #7a4a30; }
+        [data-theme="castanho"] .playlist-item:hover { border-color: rgba(90,48,32,0.3); }
+        [data-theme="castanho"] .playlist-item .del-playlist:hover { color: #7a4a30; }
+        [data-theme="castanho"] .playlist-song-item:hover { color: #7a4a30; }
+        [data-theme="castanho"] .btn-editar-letra:hover { color: #7a4a30; border-color: #7a4a30; }
+        [data-theme="castanho"] .mobile-close:hover { color: #7a4a30; border-color: #7a4a30; }
+        [data-theme="castanho"] .context-submenu-item:hover { color: #7a4a30; }
+        [data-theme="castanho"] .btn-toggle:hover { color: #7a4a30; }
+        [data-theme="castanho"] .resultados-pesquisa::-webkit-scrollbar-thumb,
+        [data-theme="castanho"] .painel-letra .letra-content::-webkit-scrollbar-thumb,
+        [data-theme="castanho"] .playlist-songs::-webkit-scrollbar-thumb { background: rgba(90,48,32,0.5); }
+        [data-theme="castanho"] .profile-dropdown { background: rgba(40,25,15,0.96); }
+        [data-theme="castanho"] .profile-dropdown-item { color: #7a4a30; }
+        [data-theme="branco-azul"] .ipod-ecra .titulo { color: #78b8a8; text-shadow: 0 0 10px rgba(150,207,195,0.4); }
         [data-theme="branco-azul"] .ipod-ecra .artista { color: #2ab0b0; }
-        [data-theme="branco-azul"] .ipod-ecra .barra-progresso { background: rgba(26,138,138,0.25); }
-        [data-theme="branco-azul"] .ipod-ecra .barra-progresso::-webkit-slider-thumb { background: #1a8a8a; box-shadow: 0 0 10px rgba(26,138,138,0.5); }
-        [data-theme="branco-azul"] .ipod-ecra .tempos { color: rgba(26,138,138,0.6); }
-        [data-theme="branco-azul"] .ipod-ecra .letra-ecra { text-shadow: 0 0 8px rgba(26,138,138,0.4); }
-        [data-theme="branco-azul"] .wheel-btn:hover { color: #2ab0b0; }
+        [data-theme="branco-azul"] .ipod-ecra .barra-progresso { background: rgba(150,207,195,0.25); }
+        [data-theme="branco-azul"] .ipod-ecra .barra-progresso::-webkit-slider-thumb { background: #78b8a8; box-shadow: 0 0 10px rgba(150,207,195,0.5); }
+        [data-theme="branco-azul"] .ipod-ecra .tempos { color: #2ab0b0; }
+        [data-theme="branco-azul"] .ipod-ecra .letra-ecra { color: #2ab0b0; text-shadow: 0 0 8px rgba(150,207,195,0.4); }
+        [data-theme="branco-azul"] .wheel-btn:hover { color: #96cfc3; }
         [data-theme="branco-azul"] .btn-favorito.ativo,
-        [data-theme="branco-azul"] .btn-preferido.ativo { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
-        [data-theme="branco-azul"] .shuffle-indicator.ativo { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .btn-preferido.ativo { color: #96cfc3; text-shadow: 0 0 12px rgba(150,207,195,0.5); }
+        [data-theme="branco-azul"] .shuffle-indicator.ativo { color: #96cfc3; text-shadow: 0 0 12px rgba(150,207,195,0.5); }
         [data-theme="branco-azul"] .repeat-indicator.repeat-all,
-        [data-theme="branco-azul"] .repeat-indicator.repeat-one { color: #2ab0b0; text-shadow: 0 0 12px rgba(26,138,138,0.5); }
+        [data-theme="branco-azul"] .repeat-indicator.repeat-one { color: #96cfc3; text-shadow: 0 0 12px rgba(150,207,195,0.5); }
         [data-theme="branco-azul"] .item-pesquisa .artista { color: #2ab0b0; }
-        [data-theme="branco-azul"] .item-pesquisa:hover { border-color: rgba(26,138,138,0.3); }
-        [data-theme="branco-azul"] .context-menu-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
-        [data-theme="branco-azul"] .profile-dropdown-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
-        [data-theme="branco-azul"] .add-menu-item:hover { background: rgba(26,138,138,0.12); color: #2ab0b0; }
-        [data-theme="branco-azul"] .btn-sair:hover { border-color: #2ab0b0; color: #2ab0b0; }
+        [data-theme="branco-azul"] .item-pesquisa:hover { border-color: rgba(150,207,195,0.3); }
+        [data-theme="branco-azul"] .context-menu-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
+        [data-theme="branco-azul"] .profile-dropdown-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
+        [data-theme="branco-azul"] .add-menu-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
+        [data-theme="branco-azul"] .btn-sair:hover { border-color: #96cfc3; color: #96cfc3; }
         [data-theme="branco-azul"] .painel-pesquisa input[type="text"]:focus,
-        [data-theme="branco-azul"] .painel-playlist input[type="text"]:focus { border-color: #2ab0b0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(26,138,138,0.3); }
-        [data-theme="branco-azul"] .user-bar { background: rgba(180,220,235,0.25); backdrop-filter: blur(10px); }
-        [data-theme="branco-azul"] .mini-player { background: rgba(180,220,235,0.2); backdrop-filter: blur(20px); }
+        [data-theme="branco-azul"] .painel-playlist input[type="text"]:focus { border-color: #96cfc3; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(150,207,195,0.3); }
+        [data-theme="branco-azul"] .user-bar { background: rgba(134,215,193,0.25); backdrop-filter: blur(10px); }
+        [data-theme="branco-azul"] .user-bar .profile-handle { color: #2ab0b0; }
+        [data-theme="branco-azul"] .mini-player { background: rgba(134,215,193,0.2); backdrop-filter: blur(20px); }
         [data-theme="branco-azul"] .mini-artista { color: #2ab0b0; }
-        [data-theme="branco-azul"] .mini-btn:hover { color: #2ab0b0; background: rgba(26,138,138,0.1); }
-        [data-theme="branco-azul"] .mini-btn.mini-play { background: rgba(26,138,138,0.2); }
-        [data-theme="branco-azul"] .mini-btn.mini-play:hover { background: rgba(26,138,138,0.35); }
+        [data-theme="branco-azul"] .mini-btn:hover { color: #96cfc3; background: rgba(150,207,195,0.1); }
+        [data-theme="branco-azul"] .mini-btn.mini-play { background: rgba(150,207,195,0.2); }
+        [data-theme="branco-azul"] .mini-btn.mini-play:hover { background: rgba(150,207,195,0.35); }
+        [data-theme="branco-azul"] .search-add-btn { color: #fff; }
+        [data-theme="branco-azul"] .search-add-btn:hover,
+        [data-theme="branco-azul"] .search-add-btn.ativo { border-color: #96cfc3; color: #96cfc3; }
+        [data-theme="branco-azul"] .search-icon { color: #fff; }
+        [data-theme="branco-azul"] .btn-add-musica:hover,
+        [data-theme="branco-azul"] .btn-add-musica.highlight { border-color: #96cfc3; color: #96cfc3; }
+        [data-theme="branco-azul"] .playlist-add-btn:hover { border-color: #96cfc3; color: #96cfc3; }
+        [data-theme="branco-azul"] .playlist-item.ativa { border-color: rgba(150,207,195,0.4); color: #96cfc3; }
+        [data-theme="branco-azul"] .playlist-item:hover { border-color: rgba(150,207,195,0.3); }
+        [data-theme="branco-azul"] .playlist-item .del-playlist:hover { color: #96cfc3; }
+        [data-theme="branco-azul"] .playlist-song-item:hover { color: #96cfc3; }
+        [data-theme="branco-azul"] .btn-editar-letra:hover { color: #96cfc3; border-color: #96cfc3; }
+        [data-theme="branco-azul"] .mobile-close:hover { color: #96cfc3; border-color: #96cfc3; }
+        [data-theme="branco-azul"] .context-submenu-item:hover { color: #96cfc3; }
+        [data-theme="branco-azul"] .btn-toggle:hover { color: #96cfc3; }
+        [data-theme="branco-azul"] .resultados-pesquisa::-webkit-scrollbar-thumb,
+        [data-theme="branco-azul"] .painel-letra .letra-content::-webkit-scrollbar-thumb,
+        [data-theme="branco-azul"] .playlist-songs::-webkit-scrollbar-thumb { background: rgba(150,207,195,0.5); }
+        [data-theme="branco-azul"] .item-pesquisa .nome { color: #fff; }
+        [data-theme="branco-azul"] .playlist-item { color: #fff; }
+        [data-theme="branco-azul"] .playlist-song-item { color: #fff; }
+        [data-theme="branco-azul"] .empty-message { color: #fff; }
+        [data-theme="branco-azul"] .painel-pesquisa input[type="text"],
+        [data-theme="branco-azul"] .painel-playlist input[type="text"] { color: #fff; text-shadow: none; }
+        [data-theme="branco-azul"] .painel-pesquisa input[type="text"]::placeholder,
+        [data-theme="branco-azul"] .painel-playlist input[type="text"]::placeholder { color: rgba(255,255,255,0.5); }
+        [data-theme="branco-azul"] .painel-pesquisa,
+        [data-theme="branco-azul"] .painel-playlist,
+        [data-theme="branco-azul"] .painel-letra { background: rgba(150,207,195,0.85); }
+        [data-theme="branco-azul"] .painel-pesquisa h2,
+        [data-theme="branco-azul"] .painel-playlist h2,
+        [data-theme="branco-azul"] .painel-letra h2 { color: #2ab0b0; }
+        [data-theme="branco-azul"] .playlist-section h3 { color: #2ab0b0; }
         [data-theme="default"] .ipod-ecra .titulo { color: #b8942e; text-shadow: 0 0 10px rgba(184,148,46,0.4); }
         [data-theme="default"] .ipod-ecra .artista { color: #d4b84a; }
         [data-theme="default"] .ipod-ecra .barra-progresso { background: rgba(184,148,46,0.25); }
@@ -1662,10 +1718,34 @@
         [data-theme="default"] .mini-btn:hover { color: #d4b84a; background: rgba(184,148,46,0.1); }
         [data-theme="default"] .mini-btn.mini-play { background: rgba(184,148,46,0.2); }
         [data-theme="default"] .mini-btn.mini-play:hover { background: rgba(184,148,46,0.4); }
+        [data-theme="default"] .search-add-btn:hover,
+        [data-theme="default"] .search-add-btn.ativo { border-color: #d4b84a; color: #d4b84a; }
+        [data-theme="default"] .btn-add-musica:hover,
+        [data-theme="default"] .btn-add-musica.highlight { border-color: #d4b84a; color: #d4b84a; }
+        [data-theme="default"] .playlist-add-btn:hover { border-color: #d4b84a; color: #d4b84a; }
+        [data-theme="default"] .playlist-item.ativa { border-color: rgba(184,148,46,0.4); color: #d4b84a; }
+        [data-theme="default"] .playlist-item:hover { border-color: rgba(184,148,46,0.3); }
+        [data-theme="default"] .playlist-item .del-playlist:hover { color: #d4b84a; }
+        [data-theme="default"] .playlist-song-item:hover { color: #d4b84a; }
+        [data-theme="default"] .btn-editar-letra:hover { color: #d4b84a; border-color: #d4b84a; }
+        [data-theme="default"] .mobile-close:hover { color: #d4b84a; border-color: #d4b84a; }
+        [data-theme="default"] .context-submenu-item:hover { color: #d4b84a; }
+        [data-theme="default"] .btn-toggle:hover { color: #d4b84a; }
+        [data-theme="default"] .resultados-pesquisa::-webkit-scrollbar-thumb,
+        [data-theme="default"] .painel-letra .letra-content::-webkit-scrollbar-thumb,
+        [data-theme="default"] .playlist-songs::-webkit-scrollbar-thumb { background: rgba(184,148,46,0.5); }
+        [data-theme="default"] .profile-dropdown { background: rgba(40,45,30,0.96); }
+        [data-theme="default"] .profile-dropdown-item { color: #d4b84a; }
         [data-theme="preto"] .ipod-ecra .barra-progresso { background: rgba(204,51,51,0.25); }
         [data-theme="preto"] .ipod-ecra .tempos { color: rgba(204,51,51,0.6); }
         [data-theme="preto"] .user-bar { background: rgba(0,0,0,0.7); }
         [data-theme="preto"] .mini-player { background: rgba(0,0,0,0.9); }
+        [data-theme="preto"] .mobile-close:hover { color: #cc3333; border-color: #cc3333; }
+        [data-theme="preto"] .resultados-pesquisa::-webkit-scrollbar-thumb,
+        [data-theme="preto"] .painel-letra .letra-content::-webkit-scrollbar-thumb,
+        [data-theme="preto"] .playlist-songs::-webkit-scrollbar-thumb { background: rgba(204,51,51,0.5); }
+        [data-theme="preto"] .profile-dropdown { background: rgba(10,10,15,0.96); }
+        [data-theme="preto"] .profile-dropdown-item { color: #cc3333; }
     </style>
 </head>
 <body>
@@ -2727,7 +2807,7 @@
     function mostrarLetra(letra) {
         cancelarEditarLetra();
         if (!letra || letra.length === 0) {
-            letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível<br><span style="font-size:11px;color:rgba(255,255,255,0.2)">Clica em ✎ para adicionar</span></div>';
+            letraContent.innerHTML = '<div class="sem-letra">Sem letra disponível<br><span class="empty-message" style="font-size:11px;">Clica em ✎ para adicionar</span></div>';
             return;
         }
         let html = '';
@@ -3411,7 +3491,7 @@
         }).filter(function(s) { return s !== null; });
 
         if (songs.length === 0) {
-            el.innerHTML = '<div class="playlist-songs-title">' + playlistAtiva + '</div><div style="color:rgba(255,255,255,0.2);font-size:11px;text-align:center;padding:8px;">Vazia</div>';
+            el.innerHTML = '<div class="playlist-songs-title">' + playlistAtiva + '</div><div class="empty-message" style="font-size:11px;text-align:center;padding:8px;">Vazia</div>';
             el.classList.add('show');
             return;
         }
@@ -3462,7 +3542,7 @@
         var nomes = Object.keys(playlists);
         if (termo) nomes = nomes.filter(function(n) { return n.toLowerCase().includes(termo); });
         if (nomes.length === 0) {
-            el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:11px;text-align:center;padding:8px;">' + (termo ? 'Nenhuma playlist' : 'Sem playlists') + '</div>';
+            el.innerHTML = '<div class="empty-message" style="font-size:11px;text-align:center;padding:8px;">' + (termo ? 'Nenhuma playlist' : 'Sem playlists') + '</div>';
             return;
         }
         var html = '';
@@ -3512,7 +3592,7 @@
         // Build playlist submenu
         var names = Object.keys(playlists);
         if (names.length === 0) {
-            submenu.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center">Sem playlists</div>';
+            submenu.innerHTML = '<div class="empty-message" style="padding:8px 12px;font-size:11px;text-align:center">Sem playlists</div>';
         } else {
             var html = '';
             names.forEach(function(n) {
