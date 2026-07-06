@@ -453,8 +453,8 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 8px;
-            width: 240px;
-            min-width: 180px;
+            width: 280px;
+            min-width: 240px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
@@ -570,6 +570,98 @@
             padding: 40px 0;
         }
         .empty-message { color: rgba(255,255,255,0.2); }
+
+        /* ===== NOTES PANEL ===== */
+        .painel-notas {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 320px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.18);
+            padding: 8px;
+            color: white;
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .painel-notas.aberto {
+            transform: translateX(0);
+        }
+        .painel-notas h2 {
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b0b0b0;
+            text-shadow: 0 0 20px rgba(192,192,192,0.3);
+            margin-bottom: 15px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .painel-notas .notas-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .painel-notas .nota-add-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            width: 100%;
+            padding: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+            margin-top: 10px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .painel-notas .nota-add-btn:hover {
+            border-color: #cc3333;
+            color: #cc3333;
+            background: rgba(204,51,51,0.1);
+        }
+        .painel-notas .nota-input-area {
+            margin-top: 10px;
+        }
+        .painel-notas .nota-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 13px;
+            font-family: 'Consolas','Courier New',monospace;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .painel-notas .nota-textarea:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+        .painel-notas .nota-save-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+            margin-top: 8px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .painel-notas .nota-save-btn:hover {
+            border-color: #cc3333;
+            color: #cc3333;
+        }
+        .painel-notas .mobile-close { display: none; }
 
         /* ===== PAINEL PLAYLIST ===== */
         .painel-playlist {
@@ -770,17 +862,29 @@
         }
         .user-bar .btn-sair {
             background: none;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.5);
-            padding: 5px 15px;
-            border-radius: 15px;
+            border: none;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 11px;
+            overflow: hidden;
+            flex-shrink: 0;
             transition: 0.3s;
         }
         .user-bar .btn-sair:hover {
-            border-color: #cc3333;
-            color: #cc3333;
+            box-shadow: 0 0 12px rgba(255,255,255,0.3);
+        }
+        .user-bar .btn-sair:hover .capa-btn {
+            animation: girarCD 0.6s linear infinite;
+        }
+        .capa-btn {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s;
         }
         .user-bar .profile-info {
             display: flex;
@@ -1555,6 +1659,8 @@
             .painel-playlist h2 { font-size: 13px; padding-right: 40px; }
             .painel-letra h2 { font-size: 15px; padding-left: 40px; }
             .painel-letra .letra-content { max-height: calc(100vh - 140px); }
+            .painel-notas .mobile-close { display: flex; }
+            .painel-notas { width: 85vw; max-width: 320px; }
 
             /* Backdrop */
             .panel-backdrop {
@@ -1649,7 +1755,9 @@
         [data-theme="branco-azul"] .context-menu-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
         [data-theme="branco-azul"] .profile-dropdown-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
         [data-theme="branco-azul"] .add-menu-item:hover { background: rgba(150,207,195,0.12); color: #96cfc3; }
-        [data-theme="branco-azul"] .btn-sair:hover { border-color: #96cfc3; color: #96cfc3; }
+        [data-theme="branco-azul"] .btn-sair:hover { box-shadow: 0 0 12px rgba(150,207,195,0.5); }
+        [data-theme="branco-azul"] .nota-add-btn:hover,
+        [data-theme="branco-azul"] .nota-save-btn:hover { border-color: #96cfc3; color: #96cfc3; background: rgba(150,207,195,0.1); }
         [data-theme="branco-azul"] .painel-pesquisa input[type="text"]:focus,
         [data-theme="branco-azul"] .painel-playlist input[type="text"]:focus { border-color: #96cfc3; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 15px rgba(150,207,195,0.3); }
         [data-theme="branco-azul"] .user-bar { background: rgba(134,215,193,0.25); backdrop-filter: blur(10px); }
@@ -1779,7 +1887,7 @@
                 <button class="profile-dropdown-item" onclick="logout()">Quit</button>
             </div>
         </div>
-        <button class="btn-sair" onclick="logout()">Sair</button>
+        <button class="btn-sair" onclick="toggleNotesPanel()"><img class="capa-btn" id="capaBtn" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=M%C3%BAsica" alt=""></button>
     </div>
 
     <!-- PROFILE MODAL -->
@@ -1984,6 +2092,17 @@
 </div>
 
 <div class="panel-backdrop" id="panelBackdrop" onclick="mobileCloseAllPanels()"></div>
+
+<!-- NOTES PANEL -->
+<div class="painel-notas" id="painelNotas">
+    <h2>Notes</h2>
+    <div class="notas-content" id="notasContent"></div>
+    <div class="nota-input-area" id="notaInputArea" style="display:none">
+        <textarea class="nota-textarea" id="notaTextarea" placeholder="Escreve a nota..."></textarea>
+        <button class="nota-save-btn" onclick="salvarNota()">Guardar</button>
+    </div>
+    <button class="nota-add-btn" onclick="addNotaClick()" title="Adicionar nota">+</button>
+</div>
 
 <div class="context-menu" id="contextMenu">
     <button class="context-menu-item" data-action="favorite"><span class="ctx-icon">♡</span> Favorito</button>
@@ -2580,6 +2699,13 @@
     let indiceLinhaAtual = -1;
     let shuffleOn = false;
     let repeatMode = 0; // 0=off, 1=all, 2=one
+
+    // sync capaBtn with capa
+    const capaBtnEl = document.getElementById('capaBtn');
+    if (capaBtnEl) {
+        new MutationObserver(function() { capaBtnEl.src = capaEl.src; }).observe(capaEl, { attributes: true, attributeFilter: ['src'] });
+        capaBtnEl.src = capaEl.src;
+    }
     let favoritos = [];
     let preferidos = [];
     let playlists = {};
@@ -3196,6 +3322,15 @@
         }
     });
 
+    // notes panel
+    function toggleNotesPanel() {
+        document.getElementById('painelNotas').classList.toggle('aberto');
+        document.getElementById('panelBackdrop').classList.toggle('show');
+    }
+    function addNotaClick() {
+        // placeholder
+    }
+
     // "+" menu toggle and actions
     function toggleAddMenu() {
         var menu = document.getElementById('addMenu');
@@ -3786,6 +3921,7 @@
         document.querySelectorAll('.painel-pesquisa.panel-open, .painel-playlist.panel-open, .painel-letra.panel-open').forEach(function(p) {
             p.classList.remove('panel-open');
         });
+        document.getElementById('painelNotas').classList.remove('aberto');
         document.getElementById('panelBackdrop').classList.remove('show');
         mobilePanelOpen = null;
         document.body.style.overflow = '';
