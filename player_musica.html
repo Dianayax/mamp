@@ -1044,6 +1044,24 @@
         .login-modal .btn-toggle:hover {
             color: #aa2222;
         }
+        .login-modal .btn-convidado {
+            width: 100%;
+            padding: 10px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 12px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .login-modal .btn-convidado:hover {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.8);
+            border-color: rgba(255,255,255,0.3);
+        }
         .login-modal .erro {
             color: #cc3333;
             font-size: 12px;
@@ -2217,6 +2235,7 @@
             <input type="text" id="loginHandle" placeholder="@utilizador" style="display:none" maxlength="20">
             <button class="btn-login" id="loginBtn" onclick="handleLogin()">Entrar</button>
             <button class="btn-toggle" id="loginToggle" onclick="toggleLoginMode()">Não tens conta? Registar</button>
+            <button class="btn-convidado" onclick="entrarConvidado()">Entrar como Convidado</button>
         </div>
     </div>
 
@@ -2239,6 +2258,7 @@
         <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
         <div class="sel-bar" id="selBar">
             <span class="sel-count" id="selCount">0 selecionadas</span>
+            <button class="sel-btn" onclick="selTudo()">☑ Tudo</button>
             <button class="sel-btn" onclick="selAddPlaylist()">+ Add à Playlist</button>
             <button class="sel-btn danger" onclick="selRemover()">✕ Remover</button>
             <button class="sel-btn" onclick="sairSelecao()">Cancelar</button>
@@ -2557,6 +2577,19 @@
             }
             entrar(email);
         }
+    }
+
+    function entrarConvidado() {
+        var guestId = 'convidado_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        var users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+        users[guestId] = { pw: '', handle: '@convidado' };
+        localStorage.setItem('chromecore_users', JSON.stringify(users));
+        entrar(guestId);
+        document.getElementById('loginBtn').textContent = 'Entrar';
+        document.getElementById('loginToggle').textContent = 'Não tens conta? Registar';
+        document.getElementById('loginHandle').style.display = 'none';
+        document.getElementById('loginSub').textContent = 'Inicia sessão para acederes à tua biblioteca';
+        loginMode = 'login';
     }
 
     function entrar(email) {
@@ -3396,6 +3429,10 @@
         resultadosPesquisa.innerHTML = html;
         resultadosPesquisa.querySelectorAll('.item-pesquisa').forEach(function(el) {
             el.addEventListener('click', function() {
+                if (document.querySelector('.painel-pesquisa').classList.contains('modo-selecao')) {
+                    toggleSel(parseInt(this.getAttribute('data-index')));
+                    return;
+                }
                 const idx = parseInt(this.getAttribute('data-index'));
                 carregarMusica(idx);
                 audio.play();
@@ -3405,6 +3442,7 @@
                 showContextMenu(e, idx);
             });
         });
+        atualizarSelCheckboxes();
     }
 
     pesquisaInput.addEventListener('input', atualizarPesquisa);
@@ -4056,7 +4094,124 @@
 
     function selecionarMusicas() {
         fecharAddMenu();
-        document.getElementById('fileInput').click();
+        var painel = document.querySelector('.painel-pesquisa');
+        painel.classList.toggle('modo-selecao');
+        document.getElementById('selBar').classList.toggle('show');
+        if (!painel.classList.contains('modo-selecao')) {
+            limparSelecao();
+        } else {
+            atualizarSelCheckboxes();
+        }
+    }
+    function sairSelecao() {
+        document.querySelector('.painel-pesquisa').classList.remove('modo-selecao');
+        document.getElementById('selBar').classList.remove('show');
+        limparSelecao();
+    }
+    var selecionadas = new Set();
+    function limparSelecao() { selecionadas.clear(); atualizarSelUI(); }
+    function toggleSel(index) {
+        if (selecionadas.has(index)) selecionadas.delete(index);
+        else selecionadas.add(index);
+        atualizarSelUI();
+    }
+    function atualizarSelUI() {
+        document.getElementById('selCount').textContent = selecionadas.size + ' selecionada' + (selecionadas.size !== 1 ? 's' : '');
+        document.querySelectorAll('.item-pesquisa').forEach(function(el) {
+            var idx = parseInt(el.getAttribute('data-index'));
+            var check = el.querySelector('.sel-check');
+            if (check) {
+                check.classList.toggle('checked', selecionadas.has(idx));
+            }
+            el.classList.toggle('sel-active', selecionadas.has(idx));
+        });
+    }
+    function atualizarSelCheckboxes() {
+        document.querySelectorAll('.item-pesquisa').forEach(function(el) {
+            var idx = parseInt(el.getAttribute('data-index'));
+            var check = el.querySelector('.sel-check') || document.createElement('span');
+            if (!check.classList.contains('sel-check')) {
+                check.className = 'sel-check';
+                el.insertBefore(check, el.firstChild);
+            }
+            check.classList.toggle('checked', selecionadas.has(idx));
+            el.classList.toggle('sel-active', selecionadas.has(idx));
+        });
+    }
+    function selTudo() {
+        var items = document.querySelectorAll('#resultadosPesquisa .item-pesquisa');
+        var todas = Array.from(items).map(function(el) { return parseInt(el.getAttribute('data-index')); });
+        var algumaNaoSel = todas.some(function(idx) { return !selecionadas.has(idx); });
+        if (algumaNaoSel) {
+            todas.forEach(function(idx) { selecionadas.add(idx); });
+        } else {
+            todas.forEach(function(idx) { selecionadas.delete(idx); });
+        }
+        atualizarSelUI();
+    }
+    function selAddPlaylist() {
+        if (selecionadas.size === 0) return;
+        var nomes = [];
+        selecionadas.forEach(function(idx) {
+            if (musicas[idx]) nomes.push(musicas[idx].nome);
+        });
+        if (!confirm('Adicionar ' + selecionadas.size + ' música' + (selecionadas.size !== 1 ? 's' : '') + ' à playlist ativa?')) return;
+        if (playlistAtiva && playlists[playlistAtiva]) {
+            var ids = playlists[playlistAtiva].musicas || playlists[playlistAtiva];
+            selecionadas.forEach(function(idx) {
+                var m = musicas[idx];
+                if (m) {
+                    var mid = m._id || m.dbId || idx;
+                    if (ids.indexOf(mid) === -1) ids.push(mid);
+                }
+            });
+            playlists[playlistAtiva] = { musicas: ids, desc: playlists[playlistAtiva].desc || '', cover: playlists[playlistAtiva].cover || '' };
+            guardarPlaylists();
+        } else {
+            var nomePl = prompt('Nome da nova playlist:');
+            if (nomePl) {
+                var ids = [];
+                selecionadas.forEach(function(idx) {
+                    var m = musicas[idx];
+                    if (m) {
+                        var mid = m._id || m.dbId || idx;
+                        ids.push(mid);
+                    }
+                });
+                playlists[nomePl] = { musicas: ids, desc: '', cover: '' };
+                guardarPlaylists();
+            }
+        }
+        sairSelecao();
+    }
+    function selRemover() {
+        if (selecionadas.size === 0) return;
+        var nomes = [];
+        selecionadas.forEach(function(idx) {
+            if (musicas[idx]) nomes.push(musicas[idx].nome);
+        });
+        if (!confirm('Remover ' + selecionadas.size + ' música' + (selecionadas.size !== 1 ? 's' : '') + '?\n' + nomes.join('\n'))) return;
+        var sorted = Array.from(selecionadas).sort(function(a,b) { return b - a; });
+        sorted.forEach(function(idx) {
+            var m = musicas[idx];
+            if (m && m.dbId) removerAudioDoDB(m.dbId);
+            musicas.splice(idx, 1);
+            if (idx < indiceAtual) indiceAtual--;
+        });
+        if (indiceAtual >= musicas.length) indiceAtual = musicas.length - 1;
+        guardarBiblioteca();
+        if (musicas.length === 0) {
+            audio.src = '';
+            tituloEl.textContent = 'Nenhuma música';
+            artistaEl.textContent = '---';
+            capaEl.src = getThemeCover();
+            letraContent.innerHTML = '<div class="sem-letra">Seleciona uma música<br>para ver a letra</div>';
+            document.getElementById('miniPlayer').classList.remove('show');
+        } else {
+            carregarMusica(indiceAtual);
+        }
+        sairSelecao();
+        atualizarPesquisa();
     }
 
     // Close menus on outside click
