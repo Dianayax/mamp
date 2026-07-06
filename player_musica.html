@@ -188,6 +188,57 @@
             opacity: 0.5;
         }
         .add-menu-item:hover .menu-icon { opacity: 1; }
+        .sel-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            margin-top: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .sel-bar.show { display: flex; }
+        .sel-bar .sel-count { flex:1; }
+        .sel-bar .sel-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .sel-bar .sel-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); }
+        .sel-bar .sel-btn.danger:hover { background: rgba(204,51,51,0.2); border-color: #cc3333; color: #cc3333; }
+        .painel-pesquisa .item-pesquisa.sel-active {
+            background: rgba(204,51,51,0.15);
+            border-left: 3px solid #cc3333;
+        }
+        .painel-pesquisa .item-pesquisa .sel-check {
+            display: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: 0.2s;
+            margin-right: 8px;
+        }
+        .painel-pesquisa.modo-selecao .item-pesquisa .sel-check { display: inline-flex; }
+        .painel-pesquisa.modo-selecao .item-pesquisa { cursor: pointer; }
+        .painel-pesquisa .item-pesquisa .sel-check.checked {
+            background: #cc3333;
+            border-color: #cc3333;
+            color: #fff;
+        }
         .painel-pesquisa input[type="text"],
         .painel-playlist input[type="text"] {
             width: 100%;
@@ -2182,9 +2233,16 @@
                 <button class="add-menu-item" onclick="addSongClick()"><span class="menu-icon">🎵</span> Add Song</button>
                 <button class="add-menu-item" onclick="addFolderClick()"><span class="menu-icon">📁</span> Add Playlist (Folder)</button>
                 <button class="add-menu-item" onclick="addPlaylistClick()"><span class="menu-icon">📋</span> Create a Playlist</button>
+                <button class="add-menu-item" onclick="selecionarMusicas()"><span class="menu-icon">☑</span> Selecionar Músicas</button>
             </div>
         </div>
         <div class="resultados-pesquisa" id="resultadosPesquisa"></div>
+        <div class="sel-bar" id="selBar">
+            <span class="sel-count" id="selCount">0 selecionadas</span>
+            <button class="sel-btn" onclick="selAddPlaylist()">+ Add à Playlist</button>
+            <button class="sel-btn danger" onclick="selRemover()">✕ Remover</button>
+            <button class="sel-btn" onclick="sairSelecao()">Cancelar</button>
+        </div>
         <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
         <input type="file" id="folderInput" webkitdirectory multiple style="display:none">
     </div>
@@ -2288,10 +2346,9 @@
 </div>
 
 <div class="context-menu" id="contextMenu">
-    <button class="context-menu-item" data-action="favorite"><span class="ctx-icon">♡</span> Favorito</button>
-    <div class="context-menu-divider"></div>
     <button class="context-menu-item has-submenu" id="ctxAddPlaylist"><span class="ctx-icon">+</span> Add à Playlist</button>
     <div class="context-submenu" id="ctxPlaylistSubmenu"></div>
+    <button class="context-menu-item" id="ctxCriarPlaylist"><span class="ctx-icon">📋</span> Criar Playlist</button>
     <div class="context-menu-divider"></div>
     <button class="context-menu-item danger" data-action="delete"><span class="ctx-icon">✕</span> Remover</button>
 </div>
@@ -3997,6 +4054,11 @@
         abrirCriarPlaylist();
     }
 
+    function selecionarMusicas() {
+        fecharAddMenu();
+        document.getElementById('fileInput').click();
+    }
+
     // Close menus on outside click
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.search-wrapper')) {
@@ -4432,20 +4494,14 @@
     document.getElementById('contextMenu').addEventListener('click', function(e) {
         var btn = e.target.closest('.context-menu-item');
         if (!btn) return;
+        if (btn.id === 'ctxCriarPlaylist') {
+            fecharContextMenu();
+            abrirCriarPlaylist();
+            return;
+        }
         var action = btn.getAttribute('data-action');
         if (!action) return;
-        if (action === 'favorite') {
-            if (!usuarioAtual || ctxTargetIndex < 0) return;
-            var musica = musicas[ctxTargetIndex];
-            if (!musica) return;
-            var id = musica._id || musica.dbId || ctxTargetIndex;
-            var idx = favoritos.indexOf(id);
-            if (idx >= 0) { favoritos.splice(idx, 1); }
-            else { favoritos.push(id); }
-            guardarFavoritos();
-            if (ctxTargetIndex === indiceAtual) { atualizarBtnFavorito(); atualizarBtnPreferido(); }
-            fecharContextMenu();
-        } else if (action === 'delete') {
+        if (action === 'delete') {
             if (ctxTargetIndex < 0) return;
             if (!confirm('Remover "' + musicas[ctxTargetIndex].nome + '" da biblioteca?')) return;
             var musica = musicas[ctxTargetIndex];
