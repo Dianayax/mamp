@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Player de Música - YourOWNspace</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
@@ -29,7 +32,7 @@
             align-items: stretch;
             position: relative;
             z-index: 1;
-            max-width: 1200px;
+            max-width: 1700px;
             width: 100%;
             justify-content: center;
         }
@@ -46,18 +49,20 @@
             .ipod-ecra {
                 flex: 1;
                 min-height: 130px;
+                max-height: 60%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
             }
             .ipod-ecra .capa {
-                max-width: 150px;
-                height: 100px;
+                max-width: 280px;
+                height: 180px;
             }
             .click-wheel {
+                flex: 0 0 auto;
                 width: 150px;
                 height: 150px;
-                flex-shrink: 0;
+                margin: auto;
             }
             .wheel-center {
                 width: 50px;
@@ -79,20 +84,21 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 8px;
-            width: 280px;
-            min-width: 240px;
+            flex: 1 1 400px;
+            min-width: 260px;
+            max-width: 400px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
         }
         .painel-pesquisa h2 {
-            font-size: 15px;
+            font-size: 30px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #b0b0b0;
             text-shadow: 0 0 20px rgba(192,192,192,0.3);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
             font-family: 'Consolas', 'Courier New', monospace;
         }
@@ -242,12 +248,12 @@
         .painel-pesquisa input[type="text"],
         .painel-playlist input[type="text"] {
             width: 100%;
-            padding: 12px 40px 12px 32px;
+            padding: 14px 40px 14px 36px;
             border-radius: 25px;
             border: 1px solid rgba(192,192,192,0.2);
             background: linear-gradient(145deg, rgba(180,180,180,0.12), rgba(120,120,120,0.06));
             color: #ddd;
-            font-size: 14px;
+            font-size: 16px;
             outline: none;
             transition: 0.3s;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.05);
@@ -308,12 +314,12 @@
             border-radius: 2px;
         }
         .item-pesquisa {
-            padding: 8px 10px;
+            padding: 12px 14px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 20px;
             transition: 0.2s;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
             border: 1px solid transparent;
@@ -329,13 +335,14 @@
         }
         .item-pesquisa .artista {
             color: #cc3333;
-            font-size: 11px;
+            font-size: 18px;
         }
 
         /* ===== IPOD (CENTRO) ===== */
         .ipod {
-            width: 280px;
-            min-width: 240px;
+            flex: 1 1 400px;
+            min-width: 260px;
+            max-width: 400px;
             background: linear-gradient(145deg, #e8e8e8, #c0c0c0, #a8a8a8);
             border-radius: 24px;
             padding: 8px;
@@ -359,23 +366,23 @@
         }
         .ipod-ecra .capa {
             width: 100%;
-            max-width: 180px;
-            height: 130px;
+            max-width: 280px;
+            height: 180px;
             border-radius: 12px;
             object-fit: cover;
-            margin: 0 auto 12px;
+            margin: 0 auto;
             display: block;
             border: 2px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .ipod-ecra .titulo {
-            font-size: 13px;
+            font-size: 22px;
             font-weight: bold;
             color: #aa2222;
             text-shadow: 0 0 10px rgba(204,51,51,0.4);
         }
         .ipod-ecra .artista {
-            font-size: 11px;
+            font-size: 20px;
             color: #cc3333;
             margin-top: 2px;
         }
@@ -407,7 +414,7 @@
         }
         .ipod-ecra .letra-ecra {
             margin-top: 6px;
-            font-size: 10px;
+            font-size: 16px;
             color: #ccc;
             min-height: 14px;
             line-height: 1.3;
@@ -514,13 +521,16 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 8px;
-            width: 280px;
-            min-width: 240px;
+            flex: 1 1 400px;
+            min-width: 260px;
+            max-width: 400px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
         }
         .painel-letra h2 {
-            font-size: 18px;
+            font-size: 30px;
             text-transform: uppercase;
             letter-spacing: 3px;
             color: #b0b0b0;
@@ -596,9 +606,9 @@
         }
         .letra-edit-actions .btn-cancel-letra:hover { color: white; }
         .painel-letra .letra-content {
-            max-height: 400px;
+            flex: 1;
             overflow-y: auto;
-            font-size: 13px;
+            font-size: 22px;
             line-height: 1.8;
             color: rgba(255,255,255,0.8);
             scroll-behavior: smooth;
@@ -888,8 +898,9 @@
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 20px;
             padding: 8px;
-            width: 280px;
-            min-width: 240px;
+            flex: 1 1 400px;
+            min-width: 260px;
+            max-width: 400px;
             color: white;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
@@ -899,7 +910,7 @@
             padding-top: 0;
         }
         .painel-playlist h2 {
-            font-size: 15px;
+            font-size: 30px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #b0b0b0;
