@@ -645,6 +645,22 @@
         .painel-notas .nota-textarea:focus {
             border-color: rgba(255,255,255,0.3);
         }
+        .painel-notas .nota-nome-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 14px;
+            font-family: 'Consolas','Courier New',monospace;
+            outline: none;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+        .painel-notas .nota-nome-input:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
         .painel-notas .nota-save-btn {
             background: none;
             border: 1px solid rgba(255,255,255,0.2);
@@ -660,6 +676,29 @@
         .painel-notas .nota-save-btn:hover {
             border-color: #cc3333;
             color: #cc3333;
+        }
+        .painel-notas .nota-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+            line-height: 1.4;
+            font-family: 'Consolas','Courier New',monospace;
+            cursor: grab;
+            transition: transform 0.15s, box-shadow 0.15s;
+            user-select: none;
+        }
+        .painel-notas .nota-item:active { cursor: grabbing; }
+        .painel-notas .nota-item.arrastando {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+        .painel-notas .nota-item.drag-over {
+            border-color: rgba(255,255,255,0.4);
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .painel-notas .mobile-close { display: none; }
 
@@ -2096,9 +2135,14 @@
 <!-- NOTES PANEL -->
 <div class="painel-notas" id="painelNotas">
     <h2>Notes</h2>
+    <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="pesquisaNota" placeholder="">
+    </div>
     <div class="notas-content" id="notasContent"></div>
     <div class="nota-input-area" id="notaInputArea" style="display:none">
-        <textarea class="nota-textarea" id="notaTextarea" placeholder="Escreve a nota..."></textarea>
+        <input type="text" class="nota-nome-input" id="notaNomeInput" placeholder="Nome da nota">
+        <textarea class="nota-textarea" id="notaTextarea" placeholder="Descrição..."></textarea>
         <button class="nota-save-btn" onclick="salvarNota()">Guardar</button>
     </div>
     <button class="nota-add-btn" onclick="addNotaClick()" title="Adicionar nota">+</button>
@@ -3328,7 +3372,54 @@
         document.getElementById('panelBackdrop').classList.toggle('show');
     }
     function addNotaClick() {
-        // placeholder
+        var area = document.getElementById('notaInputArea');
+        area.style.display = area.style.display === 'none' ? 'block' : 'none';
+        if (area.style.display === 'block') {
+            document.getElementById('notaTextarea').focus();
+        }
+    }
+    function salvarNota() {
+        var texto = document.getElementById('notaTextarea').value.trim();
+        if (!texto) return;
+        var content = document.getElementById('notasContent');
+        var nota = document.createElement('div');
+        nota.className = 'nota-item';
+        nota.textContent = texto;
+        nota.draggable = true;
+        nota.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', null);
+            this.classList.add('arrastando');
+        });
+        nota.addEventListener('dragend', function() {
+            this.classList.remove('arrastando');
+            content.querySelectorAll('.nota-item').forEach(function(n) { n.classList.remove('drag-over'); });
+        });
+        nota.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            content.querySelectorAll('.nota-item').forEach(function(n) { n.classList.remove('drag-over'); });
+            this.classList.add('drag-over');
+        });
+        nota.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+        nota.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            var arrastado = content.querySelector('.arrastando');
+            if (arrastado && arrastado !== this) {
+                var todos = Array.from(content.children);
+                var idxSrc = todos.indexOf(arrastado);
+                var idxDst = todos.indexOf(this);
+                if (idxSrc < idxDst) {
+                    this.parentNode.insertBefore(arrastado, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(arrastado, this);
+                }
+            }
+        });
+        content.appendChild(nota);
+        document.getElementById('notaTextarea').value = '';
+        document.getElementById('notaInputArea').style.display = 'none';
     }
 
     // "+" menu toggle and actions
