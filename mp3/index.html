@@ -2925,6 +2925,7 @@
         document.getElementById('themeOverlay').classList.remove('show');
         document.getElementById('settingsOverlay').classList.remove('show');
         localStorage.setItem('chromecore_theme', t);
+        if (usuarioAtual) localStorage.setItem('chromecore_theme_' + usuarioAtual, t);
         aplicarTheme(t);
     }
 
@@ -4925,6 +4926,17 @@
         carregarFavoritos();
         carregarPlaylists();
         carregarNotas();
+        // Apply per-user theme if present, otherwise fallback to global or default
+        (function(){
+            var userTheme = localStorage.getItem('chromecore_theme_' + usuarioAtual);
+            if (userTheme && themeData[userTheme]) {
+                aplicarTheme(userTheme);
+            } else {
+                var globalTheme = localStorage.getItem('chromecore_theme') || 'default';
+                if (themeData[globalTheme]) aplicarTheme(globalTheme);
+                else aplicarTheme('default');
+            }
+        })();
         iniciarPlayer();
     };
 
@@ -4932,6 +4944,12 @@
     //  17. AUTO-LOGIN + INIT
     // ================================================================
     (function() {
+        // Apply stored global theme (or default) immediately so UI looks consistent before login
+        (function(){
+            var stored = localStorage.getItem('chromecore_theme') || 'default';
+            if (!themeData[stored]) stored = 'default';
+            aplicarTheme(stored);
+        })();
         fetch('verificar_sessao.php')
             .then(function(r) { return r.json(); })
             .then(function(data) {
