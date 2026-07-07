@@ -5006,11 +5006,20 @@
     //  17. AUTO-LOGIN + INIT
     // ================================================================
     (function() {
-        // If we have a local session saved, restore it immediately so the UI shows
-        // the last-used account while we validate the server-side session.
+        // If we have a local session saved, restore the UI immediately but delay
+        // starting the player until server validation. This avoids errors during
+        // startup if IndexedDB or other player init fails.
         const _sessao_local = localStorage.getItem('chromecore_session');
         if (_sessao_local) {
-            try { entrar(_sessao_local); } catch(e) { console.warn('Auto-restore session failed', e); }
+            try {
+                usuarioAtual = _sessao_local;
+                // show user bar and hide login overlay so user feels logged in
+                var lo = document.getElementById('loginOverlay');
+                if (lo) lo.style.display = 'none';
+                var ub = document.getElementById('userBar');
+                if (ub) ub.style.display = 'flex';
+                try { carregarProfile(); } catch(e) { console.warn('carregarProfile failed', e); }
+            } catch(e) { console.warn('Auto-restore session failed', e); }
         }
         // Apply stored global theme (or default) immediately so UI looks consistent before login
         (function(){
