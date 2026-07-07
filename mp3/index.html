@@ -82,7 +82,9 @@
             }
         }
 
-        /* ===== PAINEL DE PESQUISA (ESQUERDA) ===== */
+        /* ================================================================
+               PAINEL 1 — PESQUISA / SONGS (ESQUERDA)
+               ================================================================ */
         .painel-pesquisa {
             background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
             backdrop-filter: blur(20px);
@@ -344,7 +346,9 @@
             font-size: 18px;
         }
 
-        /* ===== IPOD (CENTRO) ===== */
+        /* ================================================================
+               PAINEL 2 — IPOD (CENTRO)
+               ================================================================ */
         .ipod {
             flex: 1 1 400px;
             min-width: 260px;
@@ -519,7 +523,9 @@
             animation-play-state: running;
         }
 
-        /* ===== PAINEL DE LETRA (DIREITA) ===== */
+        /* ================================================================
+               PAINEL 3 — LETRA / LYRICS (DIREITA)
+               ================================================================ */
         .painel-letra {
             background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
             backdrop-filter: blur(20px);
@@ -648,7 +654,9 @@
         }
         .empty-message { color: rgba(255,255,255,0.2); }
 
-        /* ===== NOTES PANEL ===== */
+        /* ================================================================
+               PAINEL 4 — NOTAS (SLIDE-IN LATERAL DIREITA)
+               ================================================================ */
         .painel-notas {
             position: fixed;
             right: 0;
@@ -896,7 +904,9 @@
         }
         .painel-notas .mobile-close { display: none; }
 
-        /* ===== PAINEL PLAYLIST ===== */
+        /* ================================================================
+               PAINEL 5 — PLAYLIST
+               ================================================================ */
         .painel-playlist {
             background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
             backdrop-filter: blur(20px);
@@ -931,7 +941,9 @@
             padding-top: 0;
         }
 
-        /* === VOLUME === */
+        /* ================================================================
+               VOLUME SLIDER
+               ================================================================ */
         .volume-container {
             display: flex;
             align-items: center;
@@ -974,7 +986,9 @@
             text-shadow: 0 0 10px rgba(204,51,51,0.5), 0 0 30px rgba(204,51,51,0.3);
         }
 
-        /* === LOGIN MODAL === */
+        /* ================================================================
+               LOGIN / REGISTO — MODAL
+               ================================================================ */
         .login-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1092,7 +1106,9 @@
             min-height: 18px;
         }
 
-        /* === USER BAR === */
+        /* ================================================================
+               USER BAR (TOPO FIXO)
+               ================================================================ */
         .user-bar {
             position: fixed;
             top: 0;
@@ -1207,7 +1223,9 @@
             color: #cc3333;
         }
 
-        /* === CONTEXT MENU === */
+        /* ================================================================
+               CONTEXT MENU (CLIQUE DIREITO)
+               ================================================================ */
         .context-menu {
             position: fixed;
             min-width: 180px;
@@ -1304,7 +1322,9 @@
             color: #cc3333;
         }
 
-        /* === PROFILE MODAL === */
+        /* ================================================================
+               PROFILE MODAL (EDITAR PERFIL)
+               ================================================================ */
         .profile-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1399,7 +1419,9 @@
             color: #cc3333;
         }
 
-        /* === CREATE PLAYLIST MODAL === */
+        /* ================================================================
+               CRIAR PLAYLIST — MODAL
+               ================================================================ */
         .criar-playlist-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1488,7 +1510,9 @@
             color: #cc3333;
         }
 
-        /* === AVATAR ADJUSTER === */
+        /* ================================================================
+               AVATAR CROPPER / AJUSTADOR DE FOTO
+               ================================================================ */
         .avatar-adjuster {
             display: none;
             position: fixed;
@@ -1575,7 +1599,9 @@
             cursor: pointer;
         }
 
-        /* === FAVORITOS === */
+        /* ================================================================
+               BOTÕES FAVORITO / PREFERIDO
+               ================================================================ */
         .btn-favorito {
             background: none; border: none;
             font-size: 22px; cursor: pointer;
@@ -1613,14 +1639,18 @@
         .repeat-indicator.repeat-all { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
         .repeat-indicator.repeat-one { color: #ff3333; text-shadow: 0 0 12px rgba(204,51,51,0.5); }
 
-        /* === VISUALIZER === */
+        /* ================================================================
+               VISUALIZER DE ÁUDIO (CANVAS)
+               ================================================================ */
         .visualizer-canvas {
             width: 100%; max-width: 200px; height: 36px;
             border-radius: 6px; margin: 4px auto 0;
             display: block;
         }
 
-        /* === DRAG OVERLAY === */
+        /* ================================================================
+               DRAG & DROP OVERLAY
+               ================================================================ */
         .drag-overlay {
             display: none; position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1636,7 +1666,9 @@
         }
         body.drag-over .drag-overlay { display: flex; }
 
-        /* === PLAYLISTS === */
+        /* ================================================================
+               PLAYLISTS (LISTA + ITEMS)
+               ================================================================ */
         .playlist-section {
             margin-top: 15px;
             border-top: 1px solid rgba(255,255,255,0.08);
@@ -1693,7 +1725,9 @@
         }
         .playlist-item .del-playlist:hover { color: #cc3333; }
 
-        /* === PLAYLIST SONGS PANEL === */
+        /* ================================================================
+               PLAYLIST — MÚSICAS DENTRO DA PLAYLIST ATIVA
+               ================================================================ */
         .playlist-songs {
             margin-top: 8px;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -1745,7 +1779,9 @@
             flex-shrink: 0;
         }
 
-        /* === MINI PLAYER === */
+        /* ================================================================
+               MINI PLAYER (BARRA INFERIOR FIXA)
+               ================================================================ */
         .mini-player {
             position: fixed; bottom: -80px; left: 0; right: 0; height: 64px;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
@@ -2109,8 +2145,12 @@
         [data-theme="preto"] .profile-dropdown-item { color: #cc3333; }
     </style>
 </head>
+<!-- ============================================================
+     CORPO DA PÁGINA
+     ============================================================ -->
 <body>
 
+    <!-- OVERLAY DE DRAG & DROP -->
     <div class="drag-overlay"><span>Largar músicas aqui</span></div>
 
     <div class="metro-lines">
@@ -2124,7 +2164,9 @@
         <div class="vline vline3"></div>
     </div>
 
-    <!-- USER BAR -->
+    <!-- ============================================================
+         USER BAR (TOPO FIXO — SÓ DEPOIS DO LOGIN)
+         ============================================================ -->
     <div class="user-bar" id="userBar" style="display:none">
         <div class="profile-info" onclick="toggleProfileDropdown()">
             <img class="profile-avatar" id="profileAvatar" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=P" alt="avatar">
@@ -2143,7 +2185,9 @@
         <button class="btn-sair" onclick="toggleNotesPanel()"><img class="capa-btn" id="capaBtn" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=M%C3%BAsica" alt=""></button>
     </div>
 
-    <!-- PROFILE MODAL -->
+    <!-- ============================================================
+         MODAL — EDITAR PERFIL
+         ============================================================ -->
     <div class="profile-overlay" id="profileOverlay">
         <div class="profile-modal">
             <h2>Editar Perfil</h2>
@@ -2159,7 +2203,9 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
+    <!-- ============================================================
+         MODAL — SETTINGS / DEFINIÇÕES
+         ============================================================ -->
     <div class="profile-overlay" id="settingsOverlay">
         <div class="profile-modal" style="width:360px;max-height:80vh;overflow-y:auto">
             <h2>Settings</h2>
@@ -2199,7 +2245,9 @@
         </div>
     </div>
 
-    <!-- THEME MODAL -->
+    <!-- ============================================================
+         MODAL — TEMAS (THEMES)
+         ============================================================ -->
     <div class="profile-overlay" id="themeOverlay">
         <div class="profile-modal" style="width:340px">
             <h2>Theme</h2>
@@ -2213,7 +2261,9 @@
         </div>
     </div>
 
-    <!-- CREATE PLAYLIST MODAL -->
+    <!-- ============================================================
+         MODAL — CRIAR NOVA PLAYLIST
+         ============================================================ -->
     <div class="criar-playlist-overlay" id="criarPlaylistOverlay">
         <div class="criar-playlist-modal">
             <h2>Nova Playlist</h2>
@@ -2226,7 +2276,9 @@
         </div>
     </div>
 
-    <!-- AVATAR ADJUSTER -->
+    <!-- ============================================================
+         AVATAR ADJUSTER (CROP / ZOOM)
+         ============================================================ -->
     <div class="avatar-adjuster" id="avatarAdjuster">
         <div class="adjust-box">
             <h3>Ajustar Foto</h3>
@@ -2240,7 +2292,9 @@
         </div>
     </div>
 
-    <!-- LOGIN MODAL -->
+    <!-- ============================================================
+         MODAL — LOGIN / REGISTO
+         ============================================================ -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-modal">
             <h1>YourOWNspace</h1>
@@ -2258,8 +2312,13 @@
         </div>
     </div>
 
+    <!-- ============================================================
+         MAIN CONTAINER — 3 COLUNAS (Songs | iPod | Lyrics)
+         ============================================================ -->
     <div class="main-container">
-    <!-- PAINEL ESQUERDO: PESQUISA DE ARTISTAS -->
+    <!-- ============================================================
+         PAINEL 1 — PESQUISA / SONGS (ESQUERDA)
+         ============================================================ -->
     <div class="painel-pesquisa">
         <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <h2>Songs</h2>
@@ -2286,7 +2345,9 @@
         <input type="file" id="folderInput" webkitdirectory multiple style="display:none">
     </div>
 
-    <!-- PAINEL PLAYLIST -->
+    <!-- ============================================================
+         PAINEL 2 — PLAYLIST
+         ============================================================ -->
     <div class="painel-playlist">
         <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <h2>Playlist</h2>
@@ -2301,7 +2362,9 @@
         </div>
     </div>
 
-    <!-- IPOD (CENTRO) -->
+    <!-- ============================================================
+         PAINEL 3 — IPOD / PLAYER (CENTRO)
+         ============================================================ -->
     <div class="ipod" id="player">
         <div class="ipod-ecra">
             <img class="capa" id="capa" src="https://via.placeholder.com/100/1a1a2e/00d2ff?text=M%C3%BAsica" alt="Capa">
@@ -2335,7 +2398,9 @@
         </div>
     </div>
 
-    <!-- PAINEL DIREITO: LETRA -->
+    <!-- ============================================================
+         PAINEL 4 — LETRA / LYRICS (DIREITA)
+         ============================================================ -->
     <div class="painel-letra">
         <button class="mobile-close" onclick="mobileCloseAllPanels()" title="Fechar">✕</button>
         <div class="letra-header">
@@ -2355,9 +2420,14 @@
     </div>
 </div>
 
+<!-- ============================================================
+     BACKDROP PARA MOBILE (FECHA PAINÉIS AO CLICAR FORA)
+     ============================================================ -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="mobileCloseAllPanels()"></div>
 
-<!-- NOTES PANEL -->
+<!-- ============================================================
+     PAINEL 5 — NOTAS (SLIDE-IN LATERAL)
+     ============================================================ -->
 <div class="painel-notas" id="painelNotas">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px">
         <h2 style="margin-bottom:0">Notes</h2>
@@ -2384,6 +2454,9 @@
     </div>
 </div>
 
+<!-- ============================================================
+     CONTEXT MENU (CLIQUE DIREITO NAS MÚSICAS)
+     ============================================================ -->
 <div class="context-menu" id="contextMenu">
     <button class="context-menu-item has-submenu" id="ctxAddPlaylist"><span class="ctx-icon">+</span> Add à Playlist</button>
     <div class="context-submenu" id="ctxPlaylistSubmenu"></div>
@@ -2392,6 +2465,9 @@
     <button class="context-menu-item danger" data-action="delete"><span class="ctx-icon">✕</span> Remover</button>
 </div>
 
+<!-- ============================================================
+     MINI PLAYER (BARRA INFERIOR FIXA)
+     ============================================================ -->
 <div class="mini-player" id="miniPlayer">
     <div class="mini-info" onclick="mostrarPlayerCompleto()">
         <img class="mini-capa" id="miniCapa" src="cover0.jpg" alt="">
@@ -2408,14 +2484,38 @@
     </div>
 </div>
 
+<!-- ============================================================
+     ELEMENTO ÁUDIO (OCULTO)
+     ============================================================ -->
 <audio id="audio" style="display:none">
     <source src="">
 </audio>
 
 <script>
-    // =============================================
-    // AUTH / STORAGE SYSTEM
-    // =============================================
+    // ================================================================
+    //  JS — YourOWNspace Music Player
+    //  INDEX:  1. Auth / Storage (IndexedDB + LocalStorage)
+    //          2. Login / Register
+    //          3. Profile / Avatar
+    //          4. Player Core
+    //          5. Pesquisa / Search
+    //          6. Letras / Lyrics
+    //          7. Favoritos / Preferidos
+    //          8. Playlists
+    //          9. Visualizer + Equalizer
+    //         10. Notas / Notes
+    //         11. Mini Player
+    //         12. Context Menu
+    //         13. Mobile (swipe gestures, panels)
+    //         14. Keyboard Shortcuts
+    //         15. Drag & Drop
+    //         16. Temas / Themes
+    //         17. Auto-login / Init
+    // ================================================================
+
+    // ================================================================
+    //  1. AUTH / STORAGE SYSTEM (IndexedDB + LocalStorage)
+    // ================================================================
     let usuarioAtual = null;
     let loginMode = 'login';
     const DB_NAME = 'ChromecoreDB';
@@ -2528,9 +2628,9 @@
         });
     }
 
-    // =============================================
-    // LOGIN / REGISTER
-    // =============================================
+    // ================================================================
+    //  2. LOGIN / REGISTER
+    // ================================================================
     function toggleLoginMode() {
         loginMode = (loginMode === 'login') ? 'register' : 'login';
         document.getElementById('loginBtn').textContent = (loginMode === 'login') ? 'Entrar' : 'Criar Conta';
@@ -2651,7 +2751,9 @@
         document.getElementById('btnPreferido').textContent = '☆';
     }
 
-    // --- Profile ---
+    // ================================================================
+    //  3. PROFILE / AVATAR
+    // ================================================================
     function getProfileKey() { return 'chromecore_profile_' + usuarioAtual; }
 
     function getHandle() {
@@ -2975,9 +3077,9 @@
         avatarZoom = parseInt(document.getElementById('zoomSlider').value);
     }
 
-    // =============================================
-    // PLAYER CORE
-    // =============================================
+    // ================================================================
+    //  4. PLAYER CORE
+    // ================================================================
     const audio = document.getElementById('audio');
     const btnPlay = document.getElementById('btnPlay');
     const barraProgresso = document.getElementById('progresso');
@@ -3306,7 +3408,9 @@
         }
     }
 
-    // --- Manual lyrics edit ---
+    // ================================================================
+    //  6. LETRAS / LYRICS (API + EDIÇÃO MANUAL)
+    // ================================================================
     function toggleEditarLetra() {
         var musica = musicas[indiceAtual];
         if (!musica) return;
@@ -3425,7 +3529,9 @@
         audio.volume = this.value;
     });
 
-    // --- Pesquisa de artistas ---
+    // ================================================================
+    //  5. PESQUISA / SEARCH
+    // ================================================================
     function atualizarPesquisa() {
         const termo = pesquisaInput.value.toLowerCase().trim();
         var filtradas = musicas.filter(function(m) {
@@ -3624,9 +3730,9 @@
         });
     }
 
-    // =============================================
-    // KEYBOARD SHORTCUTS
-    // =============================================
+    // ================================================================
+    //  13. KEYBOARD SHORTCUTS
+    // ================================================================
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.code === 'Space') { e.preventDefault(); alternarPlay(); }
@@ -3638,9 +3744,9 @@
         if (e.code === 'KeyM') toggleMiniPlayer();
     });
 
-    // =============================================
-    // DRAG & DROP
-    // =============================================
+    // ================================================================
+    //  14. DRAG & DROP (IMPORTAR FICHEIROS)
+    // ================================================================
     document.addEventListener('dragover', function(e) {
         e.preventDefault();
         document.body.classList.add('drag-over');
@@ -3658,7 +3764,9 @@
         }
     });
 
-    // notes panel
+    // ================================================================
+    //  15. NOTAS / NOTES
+    // ================================================================
     let ordemNotas = 'recente';
     let notaFavInput = false;
     let editandoNota = null;
@@ -4086,7 +4194,9 @@
     })();
 
 
-    // "+" menu toggle and actions
+    // ================================================================
+    //  "+" MENU (ADD) + AÇÕES
+    // ================================================================
     function toggleAddMenu() {
         var menu = document.getElementById('addMenu');
         var btn = document.getElementById('searchAddBtn');
@@ -4128,7 +4238,9 @@
             atualizarSelCheckboxes();
         }
     }
-    function sairSelecao() {
+    // ================================================================
+    //  SELEÇÃO MÚLTIPLA DE MÚSICAS
+    // ================================================================
         document.querySelector('.painel-pesquisa').classList.remove('modo-selecao');
         document.getElementById('selBar').classList.remove('show');
         limparSelecao();
@@ -4249,9 +4361,9 @@
         }
     });
 
-    // =============================================
-    // SHUFFLE & REPEAT
-    // =============================================
+    // ================================================================
+    //  7. SHUFFLE & REPEAT
+    // ================================================================
     function toggleShuffle() {
         shuffleOn = !shuffleOn;
         document.getElementById('btnShuffle').classList.toggle('ativo', shuffleOn);
@@ -4266,9 +4378,9 @@
         else if (repeatMode === 2) { btn.textContent = '⟳1'; btn.classList.add('repeat-one'); }
     }
 
-    // =============================================
-    // FAVORITES
-    // =============================================
+    // ================================================================
+    //  8. FAVORITOS / PREFERIDOS
+    // ================================================================
     function getFavKey() { return 'chromecore_favs_' + usuarioAtual; }
 
     function carregarFavoritos() {
@@ -4335,9 +4447,9 @@
         }
     }
 
-    // =============================================
-    // AUDIO VISUALIZER
-    // =============================================
+    // ================================================================
+    //  9. AUDIO VISUALIZER
+    // ================================================================
     function setupVisualizer() {
         if (audioContext) return;
         try {
@@ -4377,9 +4489,9 @@
         draw();
     }
 
-    // =============================================
-    // EQUALIZER (Settings)
-    // =============================================
+    // ================================================================
+    //  9b. EQUALIZER (Settings)
+    // ================================================================
     var eqAnimId = null;
     var eqOn = false;
 
@@ -4421,9 +4533,9 @@
         draw();
     }
 
-    // =============================================
-    // PLAYLISTS
-    // =============================================
+    // ================================================================
+    //  10. PLAYLISTS
+    // ================================================================
     function getPlaylistKey() { return 'chromecore_playlists_' + usuarioAtual; }
 
     function carregarPlaylists() {
@@ -4572,15 +4684,16 @@
         el.innerHTML = html;
     }
 
+    // Evento: pesquisa de playlists (filtro)
     document.getElementById('pesquisaPlaylist').addEventListener('input', function() {
         renderPlaylists();
     });
 
 
 
-    // =============================================
-    // MINI PLAYER
-    // =============================================
+    // ================================================================
+    //  11. MINI PLAYER (BARRA INFERIOR)
+    // ================================================================
     function toggleMiniPlayer() {
         document.getElementById('miniPlayer').classList.toggle('show');
     }
@@ -4590,9 +4703,9 @@
         document.getElementById('player').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // =============================================
-    // CONTEXT MENU (right-click on search results)
-    // =============================================
+    // ================================================================
+    //  12. CONTEXT MENU (CLIQUE DIREITO)
+    // ================================================================
     var ctxTargetIndex = -1;
 
     function showContextMenu(e, index) {
@@ -4729,7 +4842,8 @@
         if (e.key === 'Escape') fecharContextMenu();
     });
 
-    // Override entrar to load favorites and playlists
+    // Override entrar() para carregar favoritos, playlists e notas
+    // (substitui a função definida anteriormente na secção 4)
     entrar = function(email, handle) {
         usuarioAtual = email;
         localStorage.setItem('chromecore_session', email);
@@ -4745,9 +4859,9 @@
         iniciarPlayer();
     };
 
-    // =============================================
-    // Auto-login via PHP session
-    // =============================================
+    // ================================================================
+    //  17. AUTO-LOGIN + INIT
+    // ================================================================
     (function() {
         fetch('verificar_sessao.php')
             .then(function(r) { return r.json(); })
@@ -4781,7 +4895,7 @@
             });
     })();
 
-    // Apply saved theme on load
+    // --- Aplicar tema guardado ao carregar ---
     (function() {
         var t = localStorage.getItem('chromecore_theme') || 'default';
         aplicarTheme(t);
@@ -4806,9 +4920,9 @@
         iniciarPlaceholderAnim(document.getElementById('pesquisaPlaylist'), 'Pesquisar playlist...');
     })();
 
-    // =============================================
-    // Mobile panel management (swipe gestures)
-    // =============================================
+    // ================================================================
+    //  16. MOBILE — GESTOS E PAINÉIS
+    // ================================================================
     var mobilePanelOpen = null;
 
     function mobileCloseAllPanels() {
