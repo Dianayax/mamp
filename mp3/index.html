@@ -5224,6 +5224,51 @@
     });
 </script>
 
+    <script>
+        // Ensure top user-bar remains visible when a local session exists.
+        (function(){
+            try {
+                function enforceUserBar() {
+                    var sess = localStorage.getItem('chromecore_session');
+                    var ub = document.getElementById('userBar');
+                    var lo = document.getElementById('loginOverlay');
+                    if (sess) {
+                        if (ub) ub.style.display = 'flex';
+                        if (lo) lo.style.display = 'none';
+                    }
+                }
+                // run once after load
+                window.addEventListener('load', enforceUserBar);
+                // watch for attempts to show the login overlay and stop them if session exists
+                var target = document.body;
+                var obs = new MutationObserver(function(muts) {
+                    var sess = localStorage.getItem('chromecore_session');
+                    if (!sess) return;
+                    muts.forEach(function(m){
+                        if (m.type === 'attributes' && m.target && m.target.id === 'loginOverlay') {
+                            var lo = document.getElementById('loginOverlay');
+                            if (lo && lo.style && lo.style.display === 'flex') {
+                                lo.style.display = 'none';
+                                var ub = document.getElementById('userBar'); if (ub) ub.style.display = 'flex';
+                            }
+                        }
+                        if (m.addedNodes) {
+                            for (var i=0;i<m.addedNodes.length;i++) {
+                                var n = m.addedNodes[i];
+                                if (n && n.id === 'loginOverlay') {
+                                    var lo = document.getElementById('loginOverlay'); if (lo) lo.style.display='none';
+                                }
+                            }
+                        }
+                    });
+                });
+                obs.observe(target, { attributes: true, subtree: true, childList: true, attributeFilter: ['style'] });
+                // also call once now
+                enforceUserBar();
+            } catch(e) { console.warn('enforceUserBar failed', e); }
+        })();
+    </script>
+
 <!-- ============================================================
      FIM DO DOCUMENTO
      ============================================================ -->
