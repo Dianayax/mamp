@@ -5006,6 +5006,12 @@
     //  17. AUTO-LOGIN + INIT
     // ================================================================
     (function() {
+        // If we have a local session saved, restore it immediately so the UI shows
+        // the last-used account while we validate the server-side session.
+        const _sessao_local = localStorage.getItem('chromecore_session');
+        if (_sessao_local) {
+            try { entrar(_sessao_local); } catch(e) { console.warn('Auto-restore session failed', e); }
+        }
         // Apply stored global theme (or default) immediately so UI looks consistent before login
         (function(){
             var stored = localStorage.getItem('chromecore_theme') || 'default';
