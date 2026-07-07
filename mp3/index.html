@@ -3429,6 +3429,24 @@
         document.getElementById('miniTitulo').textContent = musica.nome;
         document.getElementById('miniArtista').textContent = musica.artista;
         document.getElementById('miniPlayer').classList.add('show');
+        // update playback bar (bottom) and save last played
+        try {
+            var pbAvatar = document.getElementById('playbackAvatar');
+            var pbName = document.getElementById('playbackName');
+            var pbHandle = document.getElementById('playbackHandle');
+            if (pbAvatar) pbAvatar.src = getThemeCover();
+            if (pbName) pbName.textContent = musica.nome;
+            if (pbHandle) pbHandle.textContent = musica.artista;
+        } catch(e) { console.warn('playbackBar update failed', e); }
+        try {
+            localStorage.setItem('chromecore_lastplayed', JSON.stringify({
+                nome: musica.nome,
+                artista: musica.artista,
+                ficheiro: musica.ficheiro,
+                index: index,
+                capa: getThemeCover()
+            }));
+        } catch(e) { console.warn('saving lastplayed failed', e); }
         // --- favoritos ---
         atualizarBtnFavorito();
         atualizarBtnPreferido();
@@ -5019,6 +5037,21 @@
                 var ub = document.getElementById('userBar');
                 if (ub) ub.style.display = 'flex';
                 try { carregarProfile(); } catch(e) { console.warn('carregarProfile failed', e); }
+                // restore playback-bar from last played if nothing is currently loaded
+                try {
+                    var last = localStorage.getItem('chromecore_lastplayed');
+                    if (last) {
+                        var lp = JSON.parse(last);
+                        if (lp && (typeof audio === 'undefined' || !audio.src || audio.src === '')) {
+                            var pbAvatar = document.getElementById('playbackAvatar');
+                            var pbName = document.getElementById('playbackName');
+                            var pbHandle = document.getElementById('playbackHandle');
+                            if (pbAvatar) pbAvatar.src = lp.capa || getThemeCover();
+                            if (pbName) pbName.textContent = lp.nome || 'Nenhuma música';
+                            if (pbHandle) pbHandle.textContent = lp.artista || '---';
+                        }
+                    }
+                } catch(e) { console.warn('restore lastplayed failed', e); }
             } catch(e) { console.warn('Auto-restore session failed', e); }
         }
         // Apply stored global theme (or default) immediately so UI looks consistent before login
