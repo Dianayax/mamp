@@ -1215,6 +1215,53 @@
         }
         .playback-bar .profile-name { font-size:15px; color:white; font-weight:600 }
         .playback-bar .profile-handle { font-size:12px; color:rgba(200,200,200,0.8) }
+
+        /* Stronger icon styles (default) */
+        .mini-btn, .btn-favorito, .btn-preferido, .shuffle-indicator, .repeat-indicator {
+            transition: transform .15s, box-shadow .2s;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            color: inherit;
+            border: none;
+            padding: 6px 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .mini-btn:active, .btn-favorito:active, .btn-preferido:active { transform: scale(0.98); }
+
+        /* Theme-specific strong shadows */
+        [data-theme="preto"] .mini-btn,
+        [data-theme="preto"] .btn-favorito,
+        [data-theme="preto"] .btn-preferido,
+        [data-theme="preto"] .shuffle-indicator,
+        [data-theme="preto"] .repeat-indicator {
+            box-shadow: 0 10px 32px rgba(204,51,51,0.45);
+        }
+
+        [data-theme="castanho"] .mini-btn,
+        [data-theme="castanho"] .btn-favorito,
+        [data-theme="castanho"] .btn-preferido,
+        [data-theme="castanho"] .shuffle-indicator,
+        [data-theme="castanho"] .repeat-indicator {
+            box-shadow: 0 10px 32px rgba(90,48,32,0.45);
+        }
+
+        [data-theme="branco-azul"] .mini-btn,
+        [data-theme="branco-azul"] .btn-favorito,
+        [data-theme="branco-azul"] .btn-preferido,
+        [data-theme="branco-azul"] .shuffle-indicator,
+        [data-theme="branco-azul"] .repeat-indicator {
+            box-shadow: 0 10px 32px rgba(150,207,195,0.45);
+        }
+
+        [data-theme="default"] .mini-btn,
+        [data-theme="default"] .btn-favorito,
+        [data-theme="default"] .btn-preferido,
+        [data-theme="default"] .shuffle-indicator,
+        [data-theme="default"] .repeat-indicator {
+            box-shadow: 0 10px 32px rgba(184,148,46,0.45);
+        }
         .user-bar .profile-info {
             position: relative;
         }
@@ -2230,7 +2277,7 @@
     </div>
 
     <!-- Playback bar (fixed bottom) -->
-    <div class="playback-bar" id="playbackBar" style="display:none">
+    <div class="playback-bar" id="playbackBar">
         <div class="profile-info">
             <img class="profile-avatar" id="playbackAvatar" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=P" alt="avatar">
             <div class="profile-text">
