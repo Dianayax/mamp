@@ -2253,6 +2253,28 @@
         } catch(e) { /* ignore */ }
     </script>
 
+    <script>
+        // Protect chromecore_session from accidental removal by other scripts during updates.
+        try {
+            (function(){
+                if (!window.__sessionRemoveGuardInstalled) {
+                    window.__sessionRemoveGuardInstalled = true;
+                    window.__allowRemoveSession = false;
+                    const origRemove = Storage.prototype.removeItem;
+                    Storage.prototype.removeItem = function(key) {
+                        try {
+                            if (key === 'chromecore_session' && !window.__allowRemoveSession) {
+                                console.warn('Blocked removal of chromecore_session');
+                                return; // ignore
+                            }
+                        } catch(e) {}
+                        return origRemove.apply(this, arguments);
+                    };
+                }
+            })();
+        } catch(e) { console.warn('session guard failed', e); }
+    </script>
+
     <!-- OVERLAY DE DRAG & DROP -->
     <div class="drag-overlay"><span>Largar músicas aqui</span></div>
 
@@ -2849,7 +2871,9 @@
     function logout() {
         fetch('logout.php');
         usuarioAtual = null;
-        localStorage.removeItem('chromecore_session');
+        try { window.__allowRemoveSession = true; } catch(e){}
+        try { localStorage.removeItem('chromecore_session'); } catch(e){}
+        try { window.__allowRemoveSession = false; } catch(e){}
         document.getElementById('loginOverlay').style.display = 'flex';
         document.getElementById('userBar').style.display = 'none';
         document.getElementById('miniPlayer').classList.remove('show');
