@@ -378,8 +378,8 @@
         }
         .ipod-ecra .capa {
             width: 100%;
-            max-width: 150px;
-            height: 100px;
+            max-width: 220px;
+            height: 140px;
             border-radius: 12px;
             object-fit: cover;
             margin: 0 auto 12px;
@@ -1204,14 +1204,17 @@
         }
         .user-bar .profile-name {
             color: white;
-            font-size: 13px;
-            line-height: 1.2;
+            font-size: 16px;
+            line-height: 1.1;
+            font-weight: 600;
         }
         .user-bar .profile-handle {
-            color: rgba(200,200,200,0.5);
-            font-size: 10px;
-            line-height: 1.2;
+            color: rgba(200,200,200,0.8);
+            font-size: 13px;
+            line-height: 1.1;
         }
+        .playback-bar .profile-name { font-size:15px; color:white; font-weight:600 }
+        .playback-bar .profile-handle { font-size:12px; color:rgba(200,200,200,0.8) }
         .user-bar .profile-info {
             position: relative;
         }
@@ -2172,6 +2175,18 @@
         [data-theme="preto"] .playlist-songs::-webkit-scrollbar-thumb { background: rgba(204,51,51,0.5); }
         [data-theme="preto"] .profile-dropdown { background: rgba(10,10,15,0.96); }
         [data-theme="preto"] .profile-dropdown-item { color: #cc3333; }
+        /* Theme-specific icon shadows and song-title backgrounds */
+        [data-theme="preto"] .btn-favorito, [data-theme="preto"] .btn-preferido, [data-theme="preto"] .shuffle-indicator, [data-theme="preto"] .repeat-indicator { text-shadow: 0 0 10px rgba(204,51,51,0.5); }
+        [data-theme="preto"] .item-pesquisa .nome { background: rgba(204,51,51,0.08); padding: 2px 6px; border-radius: 6px; }
+
+        [data-theme="castanho"] .btn-favorito, [data-theme="castanho"] .btn-preferido, [data-theme="castanho"] .shuffle-indicator, [data-theme="castanho"] .repeat-indicator { text-shadow: 0 0 10px rgba(90,48,32,0.45); }
+        [data-theme="castanho"] .item-pesquisa .nome { background: rgba(90,48,32,0.08); padding: 2px 6px; border-radius: 6px; }
+
+        [data-theme="branco-azul"] .btn-favorito, [data-theme="branco-azul"] .btn-preferido, [data-theme="branco-azul"] .shuffle-indicator, [data-theme="branco-azul"] .repeat-indicator { text-shadow: 0 0 10px rgba(150,207,195,0.45); }
+        [data-theme="branco-azul"] .item-pesquisa .nome { background: rgba(150,207,195,0.06); padding: 2px 6px; border-radius: 6px; }
+
+        [data-theme="default"] .btn-favorito, [data-theme="default"] .btn-preferido, [data-theme="default"] .shuffle-indicator, [data-theme="default"] .repeat-indicator { text-shadow: 0 0 10px rgba(184,148,46,0.45); }
+        [data-theme="default"] .item-pesquisa .nome { background: rgba(184,148,46,0.06); padding: 2px 6px; border-radius: 6px; }
     </style>
 </head>
 <!-- ============================================================
