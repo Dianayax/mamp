@@ -865,6 +865,7 @@
             max-height: 60px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
+            line-clamp: 3;
             -webkit-box-orient: vertical;
         }
         .painel-notas .nota-estrela {
@@ -892,6 +893,7 @@
         .painel-notas .nota-item.expandida .nota-desc {
             max-height: none;
             -webkit-line-clamp: unset;
+            line-clamp: unset;
         }
         .painel-notas .nota-item.arrastando {
             opacity: 0.4;
@@ -3170,43 +3172,40 @@
             var linhas = processarTextoLetra(texto);
             if (linhas.length === 0) return false;
             var musica = musicas[indiceAtual];
-                if (sessao) {
-                    const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
-                    if (users[sessao]) {
-                        entrar(sessao);
-                        return;
+            if (musica) {
+                musica.letra = linhas;
+                mostrarLetra(linhas);
+                if (audio && audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+                    if (!linhas.some(function(l) { return l.tempo && l.tempo > 0; })) {
+                        redistribuirTemposLetra(audio.duration);
                     }
                 }
-                document.getElementById('loginOverlay').style.display = 'flex';
-            })
-            .catch(function() {
-                // fallback to localStorage if PHP unavailable
-                const sessao = localStorage.getItem('chromecore_session');
-                if (sessao) {
-                    const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
-                    if (users[sessao]) {
-                        entrar(sessao);
-                        return;
-                    }
-                }
-                document.getElementById('loginOverlay').style.display = 'flex';
-            });
-    })();
+                guardarBiblioteca();
+            }
+            return true;
+        }
 
-</script>
-</body>
-</html>
-                    var t = (typeof item.seconds === 'number') ? item.seconds : 0;
+        function processarComTempos(obj) {
+            if (!obj) return false;
+            var linhas = [];
+            var temTempos = false;
+            if (Array.isArray(obj)) {
+                obj.forEach(function(item) {
+                    if (!item) return;
+                    var texto = item.lyrics || item.text || item.line || '';
+                    var t = (typeof item.seconds === 'number') ? item.seconds : (typeof item.time === 'number' ? item.time : 0);
                     if (t > 0) temTempos = true;
-                    linhas.push({ tempo: t, texto: item.lyrics });
-                }
-            });
+                    linhas.push({ tempo: t || 0, texto: texto || '' });
+                });
+            } else if (typeof obj === 'string') {
+                return processarEmostrar(obj);
+            }
             if (linhas.length === 0) return false;
             var musica = musicas[indiceAtual];
             if (musica) {
                 musica.letra = linhas;
                 mostrarLetra(linhas);
-                if (!temTempos && audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
+                if (!temTempos && audio && audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
                     redistribuirTemposLetra(audio.duration);
                 }
                 guardarBiblioteca();
@@ -3223,7 +3222,6 @@
                     var texto = d.syncedLyrics || d.plainLyrics || d.lyrics;
                     if (!texto) throw new Error('Sem letra');
                     if (d.syncedLyrics) {
-                        // parse synced lyrics [mm:ss.xx]text
                         var linhas = [];
                         d.syncedLyrics.split('\n').forEach(function(linha) {
                             var m = linha.match(/^\[(\d+):(\d+(?:\.\d+)?)\](.*)/);
