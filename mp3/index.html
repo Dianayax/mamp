@@ -5018,28 +5018,17 @@
                 if (data.logado) {
                     entrar(data.email, data.handle);
                 } else {
-                    // fallback to localStorage session
+                    // fallback to localStorage session — allow login from previous session even
+                    // if chromecore_users wasn't persisted by the server-side login.
                     const sessao = localStorage.getItem('chromecore_session');
-                    if (sessao) {
-                        const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
-                        if (users[sessao]) {
-                            entrar(sessao);
-                            return;
-                        }
-                    }
+                    if (sessao) { entrar(sessao); return; }
                     document.getElementById('loginOverlay').style.display = 'flex';
                 }
             })
             .catch(function() {
                 // fallback to localStorage if PHP unavailable
                 const sessao = localStorage.getItem('chromecore_session');
-                if (sessao) {
-                    const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
-                    if (users[sessao]) {
-                        entrar(sessao);
-                        return;
-                    }
-                }
+                if (sessao) { entrar(sessao); return; }
                 document.getElementById('loginOverlay').style.display = 'flex';
             });
     })();
