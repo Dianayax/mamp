@@ -2385,6 +2385,7 @@
             <canvas class="visualizer-canvas" id="visualizerCanvas" width="260" height="50"></canvas>
         </div>
 
+        <!-- CLICK WHEEL (iPod) -->
         <div class="click-wheel">
             <span class="wheel-btn menu" onclick="musicaAnterior()" title="Anterior">&lt;&lt;</span>
             <span class="wheel-btn prev" onclick="musicaAnterior()" title="Anterior">&lt;</span>
@@ -2392,6 +2393,7 @@
             <span class="wheel-btn next" onclick="proximaMusica()" title="Seguinte">&gt;</span>
         </div>
 
+        <!-- VOLUME SLIDER -->
         <div class="volume-container">
             <span style="color:#000;font-size:11px;font-family:'Consolas','Courier New',monospace;letter-spacing:2px;font-weight:bold;">VOL</span>
             <input type="range" id="volume" min="0" max="1" step="0.05" value="0.7">
@@ -2828,6 +2830,9 @@
         fecharProfileDropdown();
         alert('Feature coming soon!');
     }
+    // ================================================================
+    //  TEMAS / THEMES
+    // ================================================================
     var themeData = {
         default: { wallpaper: '#4b4e34', ipodBg: '#272519', cover: 'defaultcapa.jpg' },
         preto: { wallpaper: 'Blacktheme/blackwallpaper.png', ipodBg: 'Blacktheme/blackipodecra.jpg', cover: 'Blacktheme/bobesponja.jpg' },
@@ -3452,7 +3457,9 @@
         document.getElementById('letraContent').style.display = 'block';
     }
 
-    // --- Eventos do áudio ---
+    // ================================================================
+    //  EVENTOS DO ÁUDIO
+    // ================================================================
     audio.addEventListener('play', function() {
         btnPlay.style.transform = 'scale(1.05)';
         playerCard.classList.add('tocando');
@@ -3507,7 +3514,9 @@
         }
     });
 
-    // --- Media Session (controlos do sistema / teclas multimedia) ---
+    // ================================================================
+    //  MEDIA SESSION API (CONTROLOS DO SISTEMA / TECLAS MULTIMEDIA)
+    // ================================================================
     if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', function() { audio.play(); });
         navigator.mediaSession.setActionHandler('pause', function() { audio.pause(); });
@@ -3515,7 +3524,9 @@
         navigator.mediaSession.setActionHandler('nexttrack', function() { proximaMusica(); });
     }
 
-    // --- Barra de progresso ---
+    // ================================================================
+    //  BARRA DE PROGRESSO (EVENTO INPUT)
+    // ================================================================
     barraProgresso.addEventListener('input', function() {
         if (audio.duration) {
             const novoTempo = (this.value / 100) * audio.duration;
@@ -3523,7 +3534,9 @@
         }
     });
 
-    // --- Volume ---
+    // ================================================================
+    //  VOLUME SLIDER
+    // ================================================================
     const volumeSlider = document.getElementById('volume');
     volumeSlider.addEventListener('input', function() {
         audio.volume = this.value;
@@ -3592,7 +3605,9 @@
         return { artista: 'Desconhecido', nome: limpo };
     }
 
-    // --- Importar músicas do computador (com persistência) ---
+    // ================================================================
+    //  IMPORTAR MÚSICAS (COM METADADOS + PERSISTÊNCIA)
+    // ================================================================
     function adicionarMusicas(ficheiros) {
         let count = 0;
         var firstIdx = -1;
@@ -3700,7 +3715,9 @@
         this.value = '';
     });
 
-    // --- Inicialização do player após login ---
+    // ================================================================
+    //  INICIALIZAÇÃO DO PLAYER (APÓS LOGIN)
+    // ================================================================
     function limparDuplicados() {
         const vistos = {};
         const unicos = [];
@@ -4049,7 +4066,9 @@
         });
     });
 
-    // panel drag reorder
+    // ================================================================
+    //  DRAG & DROP — REORDENAR PAINÉIS (DESKTOP + TOUCH)
+    // ================================================================
     (function() {
         var container = document.querySelector('.main-container');
         var paineis = container.querySelectorAll('.painel-pesquisa, .painel-playlist, .painel-letra, .ipod');
@@ -4901,7 +4920,9 @@
         aplicarTheme(t);
     })();
 
-    // Placeholder typing animation
+    // ================================================================
+    //  ANIMAÇÃO PLACEHOLDER (ESCREVER / APAGAR)
+    // ================================================================
     function iniciarPlaceholderAnim(input, text) {
         var idx = 0, dir = 1;
         function tick() {
@@ -5024,5 +5045,8 @@
     });
 </script>
 
+<!-- ============================================================
+     FIM DO DOCUMENTO
+     ============================================================ -->
 </body>
 </html>
