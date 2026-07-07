@@ -5066,10 +5066,15 @@
                 if (data.logado) {
                     entrar(data.email, data.handle);
                 } else {
-                    // fallback to localStorage session — allow login from previous session even
-                    // if chromecore_users wasn't persisted by the server-side login.
+                    // If we have a local session or usuarioAtual already set, keep the UI
+                    // as-is (don't force the login overlay) — this prevents flashing
+                    // the login prompt during background updates for already-logged users.
                     const sessao = localStorage.getItem('chromecore_session');
                     if (sessao) { entrar(sessao); return; }
+                    if (typeof usuarioAtual !== 'undefined' && usuarioAtual) {
+                        // already restored earlier; do nothing
+                        return;
+                    }
                     document.getElementById('loginOverlay').style.display = 'flex';
                 }
             })
@@ -5077,6 +5082,9 @@
                 // fallback to localStorage if PHP unavailable
                 const sessao = localStorage.getItem('chromecore_session');
                 if (sessao) { entrar(sessao); return; }
+                if (typeof usuarioAtual !== 'undefined' && usuarioAtual) {
+                    return; // keep current UI for restored session
+                }
                 document.getElementById('loginOverlay').style.display = 'flex';
             });
     })();
