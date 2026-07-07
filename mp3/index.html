@@ -38,7 +38,7 @@
             align-items: stretch;
             position: relative;
             z-index: 1;
-            max-width: 1700px;
+            max-width: 1200px;
             width: 100%;
             justify-content: center;
         }
@@ -61,8 +61,8 @@
                 justify-content: center;
             }
             .ipod-ecra .capa {
-                max-width: 280px;
-                height: 180px;
+                max-width: 150px;
+                height: 100px;
             }
             .click-wheel {
                 flex: 0 0 auto;
@@ -350,9 +350,9 @@
                PAINEL 2 — IPOD (CENTRO)
                ================================================================ */
         .ipod {
-            flex: 1 1 400px;
-            min-width: 260px;
-            max-width: 400px;
+            width: 280px;
+            min-width: 240px;
+            max-width: 280px;
             background: linear-gradient(145deg, #e8e8e8, #c0c0c0, #a8a8a8);
             border-radius: 24px;
             padding: 8px;
@@ -376,11 +376,11 @@
         }
         .ipod-ecra .capa {
             width: 100%;
-            max-width: 280px;
-            height: 180px;
+            max-width: 150px;
+            height: 100px;
             border-radius: 12px;
             object-fit: cover;
-            margin: 0 auto;
+            margin: 0 auto 12px;
             display: block;
             border: 2px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -3170,23 +3170,32 @@
             var linhas = processarTextoLetra(texto);
             if (linhas.length === 0) return false;
             var musica = musicas[indiceAtual];
-            if (musica) {
-                musica.letra = linhas;
-                mostrarLetra(linhas);
-                if (audio.duration && audio.duration > 0 && audio.duration !== Infinity) {
-                    redistribuirTemposLetra(audio.duration);
+                if (sessao) {
+                    const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+                    if (users[sessao]) {
+                        entrar(sessao);
+                        return;
+                    }
                 }
-                guardarBiblioteca();
-            }
-            return true;
-        }
+                document.getElementById('loginOverlay').style.display = 'flex';
+            })
+            .catch(function() {
+                // fallback to localStorage if PHP unavailable
+                const sessao = localStorage.getItem('chromecore_session');
+                if (sessao) {
+                    const users = JSON.parse(localStorage.getItem('chromecore_users') || '{}');
+                    if (users[sessao]) {
+                        entrar(sessao);
+                        return;
+                    }
+                }
+                document.getElementById('loginOverlay').style.display = 'flex';
+            });
+    })();
 
-        function processarComTempos(data) {
-            if (!data || !Array.isArray(data) || data.length === 0) return false;
-            var linhas = [];
-            var temTempos = false;
-            data.forEach(function(item) {
-                if (item.lyrics && item.lyrics.trim() !== '') {
+</script>
+</body>
+</html>
                     var t = (typeof item.seconds === 'number') ? item.seconds : 0;
                     if (t > 0) temTempos = true;
                     linhas.push({ tempo: t, texto: item.lyrics });
@@ -4260,10 +4269,9 @@
     // ================================================================
     //  SELEÇÃO MÚLTIPLA DE MÚSICAS
     // ================================================================
-        document.querySelector('.painel-pesquisa').classList.remove('modo-selecao');
-        document.getElementById('selBar').classList.remove('show');
-        limparSelecao();
-    }
+    document.querySelector('.painel-pesquisa').classList.remove('modo-selecao');
+    document.getElementById('selBar').classList.remove('show');
+    limparSelecao();
     var selecionadas = new Set();
     function limparSelecao() { selecionadas.clear(); atualizarSelUI(); }
     function toggleSel(index) {
@@ -4914,14 +4922,6 @@
             });
     })();
 
-    // --- Aplicar tema guardado ao carregar ---
-    (function() {
-        var t = localStorage.getItem('chromecore_theme') || 'default';
-        aplicarTheme(t);
-    })();
-
-    // ================================================================
-    //  ANIMAÇÃO PLACEHOLDER (ESCREVER / APAGAR)
     // ================================================================
     function iniciarPlaceholderAnim(input, text) {
         var idx = 0, dir = 1;

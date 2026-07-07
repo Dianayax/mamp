@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $db_name = 'mp3player';
-$username = 'Diana';
+$username = 'root';
 $password = 'jrA37@f3W_0g7M@'; 
 
 try {
