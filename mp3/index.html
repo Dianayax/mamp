@@ -41,6 +41,8 @@
             max-width: 1200px;
             width: 100%;
             justify-content: center;
+            padding-top: 64px; /* leave space for fixed user bar */
+            padding-bottom: 96px; /* leave space for playback bar + mini-player */
         }
         @media (min-width: 769px) {
             .main-container {
@@ -1127,6 +1129,31 @@
             color: white;
             font-size: 13px;
         }
+        /* Playback bar (fixed bottom) - same styling as user-bar */
+        .playback-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            font-size: 13px;
+        }
+        .playback-bar .profile-info { display:flex; align-items:center; gap:10px; cursor:default }
+        .playback-bar .profile-avatar { width:32px; height:32px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.1); }
+        .playback-bar .profile-text { display:flex; flex-direction:column }
+        .playback-bar .profile-name { font-size:13px; color:white }
+        .playback-bar .profile-handle { font-size:10px; color:rgba(200,200,200,0.6) }
+
+        /* Keep mini-player above playback bar when visible */
+        .mini-player.show { bottom: 64px; }
         .user-bar .email {
             color: rgba(255,255,255,0.6);
         }
@@ -2185,6 +2212,23 @@
             </div>
         </div>
         <button class="btn-sair" onclick="toggleNotesPanel()"><img class="capa-btn" id="capaBtn" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=M%C3%BAsica" alt=""></button>
+    </div>
+
+    <!-- Playback bar (fixed bottom) -->
+    <div class="playback-bar" id="playbackBar" style="display:none">
+        <div class="profile-info">
+            <img class="profile-avatar" id="playbackAvatar" src="https://via.placeholder.com/32/1a1a2e/00d2ff?text=P" alt="avatar">
+            <div class="profile-text">
+                <span class="profile-name" id="playbackName">Utilizador</span>
+                <span class="profile-handle" id="playbackHandle">@handle</span>
+            </div>
+        </div>
+        <div class="playback-controls">
+            <!-- small playback controls mirrored from mini-player -->
+            <button class="mini-btn" onclick="musicaAnterior()">⏮</button>
+            <button class="mini-btn mini-play" id="playbackPlayBtn" onclick="alternarPlay()">▶</button>
+            <button class="mini-btn" onclick="proximaMusica()">⏭</button>
+        </div>
     </div>
 
     <!-- ============================================================
