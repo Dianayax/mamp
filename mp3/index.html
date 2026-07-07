@@ -2241,6 +2241,18 @@
      ============================================================ -->
 <body>
 
+    <script>
+        // Prevent initial flash of login overlay when a local session exists.
+        try {
+            if (localStorage.getItem('chromecore_session')) {
+                var s = document.createElement('style');
+                s.setAttribute('data-autohide-login','1');
+                s.innerHTML = '#loginOverlay{display:none !important;}';
+                document.head.appendChild(s);
+            }
+        } catch(e) { /* ignore */ }
+    </script>
+
     <!-- OVERLAY DE DRAG & DROP -->
     <div class="drag-overlay"><span>Largar músicas aqui</span></div>
 
